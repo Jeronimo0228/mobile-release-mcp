@@ -29,12 +29,5 @@ jobs:
 
       - run: npm run build
 
-      - name: Publish to npm with provenance (token)
-        if: ${{ secrets.NPM_TOKEN != '' }}
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish to npm with provenance (OIDC)
-        if: ${{ secrets.NPM_TOKEN == '' }}
+      - name: Publish to npm with provenance
         run: npm publish --provenance --access public
