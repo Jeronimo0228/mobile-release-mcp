@@ -1,12 +1,26 @@
-# mobile-release-mcp
+<div align="center">
 
-[![npm version](https://img.shields.io/npm/v/mobile-release-mcp.svg)](https://www.npmjs.com/package/mobile-release-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
+<img src="docs/assets/banner.jpg" alt="mobile-release-mcp — Ship iOS & Android from your AI agent" width="100%" />
 
-MCP server for managing mobile app releases on **App Store Connect** and **Google Play Console**. Exposes **101 tools** for MCP-compatible agents (Cursor, Claude Desktop, custom SDK agents) to manage the full iOS and Android release lifecycle.
+<br />
 
-Receives webhooks from **EAS Build/Submit** and **GitHub Actions** to react to CI/CD events automatically.
+101 MCP tools · App Store Connect · Google Play · EAS & GitHub webhooks
+
+<br />
+
+[![npm version](https://img.shields.io/npm/v/mobile-release-mcp.svg?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/mobile-release-mcp)
+[![CI](https://img.shields.io/github/actions/workflow/status/Jeronimo0228/mobile-release-mcp/ci.yml?branch=master&style=flat-square&logo=github&label=CI)](https://github.com/Jeronimo0228/mobile-release-mcp/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MCP](https://img.shields.io/badge/MCP-compatible-6366F1?style=flat-square)](https://modelcontextprotocol.io)
+
+<br />
+
+[`npx -y mobile-release-mcp`](https://www.npmjs.com/package/mobile-release-mcp) · [Quick start](#quick-start) · [Tools](docs/TOOLS.md) · [Credentials](docs/CREDENTIALS.md) · [Changelog](CHANGELOG.md)
+
+</div>
+
+---
 
 ## Install
 
