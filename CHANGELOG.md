@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-07-31
+
+### Changed
+
+- MCP server version read from `package.json` at build time (no hardcoded string)
+- npm tarball excludes GitHub-only assets (`docs/assets/banner.jpg`)
+- Deduplicated security docs; `CONTRIBUTING.md` uses the real clone URL
+
+### Fixed
+
+- Transitive dependency audit: pin `gaxios@7.3.0` via npm overrides (0 prod advisories)
+
 ## [0.2.1] - 2026-07-31
 
 ### Security
@@ -42,5 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
+[0.2.2]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.0
