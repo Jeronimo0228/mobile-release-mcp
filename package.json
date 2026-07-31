@@ -1,6 +1,6 @@
 {
   "name": "mobile-release-mcp",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "MCP server for managing mobile app releases on App Store Connect and Google Play Console",
   "license": "MIT",
   "author": "Jerónimo Restrepo <jrestrepoa@eafit.edu.co>",
