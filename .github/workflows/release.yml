@@ -15,14 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: Verify publish context
-        run: |
-          echo "repository=${{ github.repository }}"
-          echo "workflow=${{ github.workflow }}"
-          echo "workflow_ref=${{ github.workflow_ref }}"
-          echo "ref=${{ github.ref }}"
-          echo "event=${{ github.event_name }}"
-
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: "24"
@@ -37,5 +29,12 @@ jobs:
 
       - run: npm run build
 
-      - name: Publish to npm with provenance
+      - name: Publish to npm with provenance (token)
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm with provenance (OIDC)
+        if: ${{ secrets.NPM_TOKEN == '' }}
         run: npm publish --provenance --access public
