@@ -93,6 +93,8 @@ For local development from source, point MCP clients to `node /path/to/dist/inde
 | [docs/TOOLSETS.md](docs/TOOLSETS.md) | Limiting tools for agents (`MCP_TOOLSET`) |
 | [docs/TOOLS.md](docs/TOOLS.md) | Full tool catalog with categories |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Transports, reliability, project layout |
+| [docs/SECURITY.md](docs/SECURITY.md) | Supply chain, HTTP auth, deployment hardening |
+| [SECURITY.md](SECURITY.md) | Vulnerability reporting |
 
 ## Configuration
 
@@ -118,6 +120,8 @@ MCP_TOOLSET=release
 | `GOOGLE_SERVICE_ACCOUNT_KEY_PATH` | — | Path to service account JSON |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | — | Alternative: inline JSON |
 | `MCP_TRANSPORT` | `stdio` | `stdio` or `http` |
+| `MCP_HTTP_API_KEY` | — | **Required** in HTTP mode (≥32 chars). Bearer token for `/mcp` |
+| `MCP_ALLOWED_ORIGINS` | — | Comma-separated CORS origins (empty = disabled) |
 | `MCP_PORT` | `3000` | HTTP server port (when `http`) |
 | `MCP_TOOLSET` | `all` | `all`, `release`, or `readonly` |
 | `WEBHOOK_PORT` | `3000` | Webhook port in stdio mode |

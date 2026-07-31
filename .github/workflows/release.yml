@@ -1,15 +1,16 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [main, master]
-  pull_request:
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
-  verify:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630beaae6b7cb986ddca1379b # v4.2.2
@@ -17,19 +18,16 @@ jobs:
       - uses: actions/setup-node@39370e3970afc605803b4655a1c798226b75ea64 # v4.1.0
         with:
           node-version: "20"
+          registry-url: https://registry.npmjs.org
           cache: npm
 
       - run: npm ci
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
-        continue-on-error: true
-
       - run: npm run typecheck
-
-      - run: npm run build
 
       - run: npm test
 
-      - name: Verify package contents
-        run: npm pack --dry-run
+      - run: npm run build
+
+      - name: Publish to npm with provenance
+        run: npm publish --provenance --access public

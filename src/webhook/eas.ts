@@ -84,9 +84,13 @@ export function verifyEasSignature(
 export function parseEasWebhook(
   rawBody: string,
   signature: string | null,
-  secret?: string,
+  secret: string,
 ): { event: "BUILD" | "SUBMIT"; payload: EasWebhookPayload } {
-  if (secret && !verifyEasSignature(rawBody, signature, secret)) {
+  if (!secret) {
+    throw new Error("EAS webhook secret is not configured");
+  }
+
+  if (!verifyEasSignature(rawBody, signature, secret)) {
     throw new Error("Invalid EAS webhook signature");
   }
 

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-07-31
+
+### Security
+
+- Require `MCP_HTTP_API_KEY` (≥32 chars) for HTTP transport; Bearer auth on `/mcp`
+- Disable open CORS by default; optional `MCP_ALLOWED_ORIGINS`
+- Webhook parsers reject requests when secrets are missing (no unsigned fallback)
+- Limit webhook body size to 256 KB
+- Validate `WEBHOOK_STORAGE_PATH` against path traversal
+- Hide internal storage path from `/health`
+- Pin GitHub Actions to commit SHAs; minimal CI permissions
+- Add Dependabot, release workflow with npm provenance (trusted publisher)
+- Add `SECURITY.md` and `docs/SECURITY.md`
+
 ## [0.2.0] - 2026-07-31
 
 ### Added
@@ -28,4 +42,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
+[0.2.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.0

@@ -1,72 +1,69 @@
 # Publishing to npm
 
-Maintainer checklist for releasing a new version.
+## Trusted publisher (recommended)
 
-## Prerequisites
+This project uses **npm trusted publishing** via GitHub Actions. No npm tokens in the repository.
 
-- npm account with publish access
-- `npm login` completed
-- Clean git tree; version bumped in `package.json`
-- GitHub release tag created (recommended)
+### Release a new version
 
-## Dry run
+```bash
+# 1. Bump version in package.json and CHANGELOG.md
+# 2. Commit and push
+git add package.json CHANGELOG.md src/server.ts
+git commit -m "Release v0.2.1"
+git push origin master
 
-Preview the tarball contents:
+# 3. Tag and push (triggers release.yml)
+git tag v0.2.1
+git push origin v0.2.1
+```
+
+The `release.yml` workflow:
+
+- Runs typecheck + tests + build
+- Publishes with `npm publish --provenance --access public`
+- Uses OIDC (trusted publisher) — no `NPM_TOKEN` secret
+
+Verify on npm: package page should show **Provenance** badge.
+
+### npm trusted publisher setup (one-time)
+
+npm → `mobile-release-mcp` → Settings → **Trusted Publisher**:
+
+| Field | Value |
+|---|---|
+| Repository | `Jeronimo0228/mobile-release-mcp` |
+| Workflow | `release.yml` |
+| Environment | (empty or `npm`) |
+
+---
+
+## Dry run (local)
 
 ```bash
 npm run prepublishOnly
 npm pack --dry-run
 ```
 
-Verify the package includes:
+---
 
-- `dist/index.js` (with shebang)
-- `README.md`, `LICENSE`, `docs/`, `.env.example`
+## Manual publish (emergency only)
 
-## Publish
-
-```bash
-# First publish (public, unscoped)
-npm publish
-
-# Subsequent releases
-npm version patch   # or minor / major
-git push && git push --tags
-npm publish
-```
-
-## After publish
-
-Users can install via:
+Avoid manual publishes when trusted publisher is configured. If needed:
 
 ```bash
-npx -y mobile-release-mcp
-npm install -g mobile-release-mcp
+npm login
+npm publish --provenance --access public
 ```
 
-## Cursor / Claude config with npx
+Rotate any token used for manual publish afterward.
 
-```json
-{
-  "mcpServers": {
-    "mobile-release": {
-      "command": "npx",
-      "args": ["-y", "mobile-release-mcp"],
-      "env": {
-        "APPLE_KEY_ID": "...",
-        "APPLE_ISSUER_ID": "...",
-        "APPLE_PRIVATE_KEY_PATH": "/path/to/AuthKey.p8",
-        "MCP_TOOLSET": "release"
-      }
-    }
-  }
-}
+---
+
+## Consumer install
+
+```bash
+npx -y mobile-release-mcp@0.2.1
 ```
 
-## Troubleshooting
-
-| Issue | Fix |
-|---|---|
-| `403 Forbidden` on publish | Run `npm login`; verify package name ownership |
-| Missing `dist/` in tarball | Run `npm run build` before publish |
-| Wrong version published | `npm deprecate mobile-release-mcp@x.y.z "message"` |
+Verify provenance on https://www.npmjs.com/package/mobile-release-mcp
