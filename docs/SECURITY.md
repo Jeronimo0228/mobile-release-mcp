@@ -2,37 +2,12 @@
 
 Hardening practices for deploying and maintaining `mobile-release-mcp`.
 
-## Supply chain protections
-
-| Control | Implementation |
-|---|---|
-| Locked dependencies | `package-lock.json` + `npm ci` in CI |
-| Reproducible installs | No `npm install` in CI |
-| Action pinning | GitHub Actions pinned to commit SHAs |
-| Minimal CI permissions | `contents: read` only |
-| npm provenance | Releases via trusted publisher + `--provenance` |
-| Dependabot | Weekly npm + GitHub Actions updates |
-| Package allowlist | `files` field in `package.json` (no source in tarball) |
-| Pre-publish checks | `prepublishOnly`: typecheck + test + build |
-
-### Publishing model
-
-**Never store npm tokens in the repository.** With trusted publisher configured:
-
-1. Tag a release: `git tag v0.2.1 && git push origin v0.2.1`
-2. GitHub Actions `release.yml` publishes with OIDC + provenance
-3. npm verifies the package came from your GitHub repo
-
-Consumers can verify provenance on npmjs.com.
+For vulnerability reporting, supported versions, and supply-chain policy, see [SECURITY.md](../SECURITY.md) in the repo root.
 
 ### Installing safely
 
 ```bash
-# Prefer locked version
-npm install mobile-release-mcp@0.2.1
-
-# Or run without global install
-npx --yes mobile-release-mcp@0.2.1
+npx --yes mobile-release-mcp@latest
 ```
 
 Optional hardening for consumers:
@@ -96,7 +71,7 @@ MCP_ALLOWED_ORIGINS=https://app.example.com,https://admin.example.com
 
 ---
 
-## Known dependency advisories
+## Dependency advisories
 
 Run regularly:
 
@@ -104,7 +79,7 @@ Run regularly:
 npm audit --omit=dev
 ```
 
-Some advisories may come from transitive Google API / dev tooling dependencies. Dependabot PRs and periodic updates address these. CI runs audit with `continue-on-error: true` until all transitive issues are resolved upstream.
+Production deps pin `gaxios@7.3.0` via `package.json` overrides to avoid a transitive `rimraf`/`glob` advisory in older `gaxios` releases. Dependabot handles routine updates.
 
 ---
 
