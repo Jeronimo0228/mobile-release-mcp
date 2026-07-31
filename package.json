@@ -12,9 +12,17 @@
     "LICENSE",
     "CHANGELOG.md",
     "SECURITY.md",
-    "docs",
+    "docs/ARCHITECTURE.md",
+    "docs/CREDENTIALS.md",
+    "docs/PUBLISHING.md",
+    "docs/SECURITY.md",
+    "docs/TOOLS.md",
+    "docs/TOOLSETS.md",
     ".env.example"
   ],
+  "overrides": {
+    "gaxios": "7.3.0"
+  },
   "bin": {
     "mobile-release-mcp": "dist/index.js"
   },

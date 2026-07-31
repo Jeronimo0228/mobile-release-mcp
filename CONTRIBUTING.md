@@ -5,7 +5,7 @@ Thanks for contributing to mobile-release-mcp!
 ## Development setup
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Jeronimo0228/mobile-release-mcp.git
 cd mobile-release-mcp
 npm install
 cp .env.example .env

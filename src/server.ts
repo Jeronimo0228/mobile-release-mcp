@@ -8,10 +8,12 @@ import { registerSharedTools } from "./tools/shared-tools.js";
 import { createToolRegistrar } from "./utils/tool-registry.js";
 import { logger } from "./utils/logger.js";
 
+declare const __APP_VERSION__: string;
+
 export function createMcpServer(config: Config): McpServer {
   const server = new McpServer({
     name: "mobile-release-mcp",
-    version: "0.2.1",
+    version: __APP_VERSION__,
   });
 
   const tool = createToolRegistrar(server, config);
