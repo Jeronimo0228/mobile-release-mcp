@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { logger } from "./logger.js";
+import { resolveSafeStoragePath, safeJsonParse } from "./security.js";
 
 export type Toolset = "all" | "release" | "readonly";
 export type TransportMode = "stdio" | "http";
@@ -34,6 +35,8 @@ export interface Config {
   webhook: WebhookConfig;
   transport: TransportMode;
   mcpPort: number;
+  mcpHttpApiKey?: string;
+  mcpAllowedOrigins: string[];
   toolset: Toolset;
   easProjectMappings: EasProjectMapping[];
 }
@@ -69,7 +72,10 @@ function loadAppleConfig(): AppleConfig | undefined {
 function loadGoogleConfig(): GoogleConfig | undefined {
   if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
     return {
-      serviceAccountKey: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON),
+      serviceAccountKey: safeJsonParse<Record<string, unknown>>(
+        process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
+        "GOOGLE_SERVICE_ACCOUNT_JSON",
+      ),
     };
   }
 
@@ -78,7 +84,12 @@ function loadGoogleConfig(): GoogleConfig | undefined {
       process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH,
       "utf-8",
     );
-    return { serviceAccountKey: JSON.parse(raw) };
+    return {
+      serviceAccountKey: safeJsonParse<Record<string, unknown>>(
+        raw,
+        "GOOGLE_SERVICE_ACCOUNT_KEY_PATH",
+      ),
+    };
   }
 
   return undefined;
@@ -89,17 +100,34 @@ function parseToolset(value: string | undefined): Toolset {
   return "all";
 }
 
+function parseAllowedOrigins(value: string | undefined): string[] {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
 function parseEasProjectMappings(): EasProjectMapping[] {
   const raw = process.env.EAS_PROJECT_MAPPINGS;
   if (!raw) return [];
 
   try {
-    const parsed = JSON.parse(raw) as EasProjectMapping[];
+    const parsed = safeJsonParse<EasProjectMapping[]>(raw, "EAS_PROJECT_MAPPINGS");
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     logger.warn("EAS_PROJECT_MAPPINGS is not valid JSON — ignoring");
     return [];
   }
+}
+
+function loadStoragePath(): string {
+  const configured =
+    process.env.WEBHOOK_STORAGE_PATH ||
+    process.env.WEBHOOK_STORAGE ||
+    ".data/webhooks.json";
+
+  return resolveSafeStoragePath(configured);
 }
 
 export function loadConfig(): Config {
@@ -116,14 +144,13 @@ export function loadConfig(): Config {
       port: webhookPort,
       easSecret: process.env.EAS_WEBHOOK_SECRET,
       githubSecret: process.env.GITHUB_WEBHOOK_SECRET,
-      storagePath:
-        process.env.WEBHOOK_STORAGE_PATH ||
-        process.env.WEBHOOK_STORAGE ||
-        ".data/webhooks.json",
+      storagePath: loadStoragePath(),
       requireSecrets: requireWebhookSecrets,
     },
     transport,
     mcpPort,
+    mcpHttpApiKey: process.env.MCP_HTTP_API_KEY,
+    mcpAllowedOrigins: parseAllowedOrigins(process.env.MCP_ALLOWED_ORIGINS),
     toolset: parseToolset(process.env.MCP_TOOLSET),
     easProjectMappings: parseEasProjectMappings(),
   };
@@ -167,8 +194,17 @@ export function validateConfig(config: Config): ConfigValidation {
     }
   }
 
-  if (config.transport === "http" && config.mcpPort < 1) {
-    errors.push("MCP_PORT must be a positive integer.");
+  if (config.transport === "http") {
+    if (config.mcpPort < 1) {
+      errors.push("MCP_PORT must be a positive integer.");
+    }
+    if (!config.mcpHttpApiKey) {
+      errors.push(
+        "MCP_HTTP_API_KEY is required in HTTP mode to protect the /mcp endpoint.",
+      );
+    } else if (config.mcpHttpApiKey.length < 32) {
+      errors.push("MCP_HTTP_API_KEY must be at least 32 characters.");
+    }
   }
 
   if (config.toolset !== "all") {

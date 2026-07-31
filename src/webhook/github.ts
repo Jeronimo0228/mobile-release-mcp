@@ -50,9 +50,13 @@ export function parseGitHubWebhook(
   rawBody: string,
   signature: string | null,
   eventType: string | null,
-  secret?: string,
+  secret: string,
 ): GitHubWorkflowRunPayload | null {
-  if (secret && !verifyGitHubSignature(rawBody, signature, secret)) {
+  if (!secret) {
+    throw new Error("GitHub webhook secret is not configured");
+  }
+
+  if (!verifyGitHubSignature(rawBody, signature, secret)) {
     throw new Error("Invalid GitHub webhook signature");
   }
 

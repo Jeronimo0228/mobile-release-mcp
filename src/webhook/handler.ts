@@ -1,6 +1,10 @@
 import { Hono } from "hono";
 import type { WebhookConfig, EasProjectMapping } from "../utils/config.js";
 import { logger } from "../utils/logger.js";
+import {
+  assertBodySize,
+  MAX_WEBHOOK_BODY_BYTES,
+} from "../utils/security.js";
 import { parseEasWebhook, type EasWebhookPayload } from "./eas.js";
 import {
   parseGitHubWebhook,
@@ -64,7 +68,6 @@ export function createWebhookApp(
     c.json({
       status: "ok",
       webhooks: {
-        storagePath: config.storagePath,
         pending: getWebhookEvents(true).length,
       },
     }),
@@ -72,11 +75,12 @@ export function createWebhookApp(
 
   app.post("/webhook/eas", async (c) => {
     try {
-      if (config.requireSecrets && !config.easSecret) {
+      if (!config.easSecret) {
         return c.json({ error: "EAS webhooks are not configured" }, 503);
       }
 
       const rawBody = await c.req.text();
+      assertBodySize(rawBody, MAX_WEBHOOK_BODY_BYTES);
       const signature = c.req.header("Expo-Signature") || null;
 
       const { event, payload } = parseEasWebhook(
@@ -104,11 +108,12 @@ export function createWebhookApp(
 
   app.post("/webhook/github", async (c) => {
     try {
-      if (config.requireSecrets && !config.githubSecret) {
+      if (!config.githubSecret) {
         return c.json({ error: "GitHub webhooks are not configured" }, 503);
       }
 
       const rawBody = await c.req.text();
+      assertBodySize(rawBody, MAX_WEBHOOK_BODY_BYTES);
       const signature = c.req.header("X-Hub-Signature-256") || null;
       const eventType = c.req.header("X-GitHub-Event") || null;
 

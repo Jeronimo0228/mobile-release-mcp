@@ -48,6 +48,7 @@ describe("validateConfig", () => {
       "fake-key",
     ).toString("base64");
     process.env.MCP_TRANSPORT = "http";
+    process.env.MCP_HTTP_API_KEY = "x".repeat(32);
     delete process.env.EAS_WEBHOOK_SECRET;
     delete process.env.GITHUB_WEBHOOK_SECRET;
 
@@ -56,6 +57,24 @@ describe("validateConfig", () => {
 
     assert.equal(validation.valid, false);
     assert.ok(validation.errors.some((e) => e.includes("EAS_WEBHOOK_SECRET")));
+  });
+
+  it("requires MCP_HTTP_API_KEY in HTTP mode", () => {
+    process.env.APPLE_KEY_ID = "KEY";
+    process.env.APPLE_ISSUER_ID = "ISSUER";
+    process.env.APPLE_PRIVATE_KEY_BASE64 = Buffer.from(
+      "fake-key",
+    ).toString("base64");
+    process.env.MCP_TRANSPORT = "http";
+    process.env.EAS_WEBHOOK_SECRET = "eas-secret";
+    process.env.GITHUB_WEBHOOK_SECRET = "github-secret";
+    delete process.env.MCP_HTTP_API_KEY;
+
+    const config = loadConfig();
+    const validation = validateConfig(config);
+
+    assert.equal(validation.valid, false);
+    assert.ok(validation.errors.some((e) => e.includes("MCP_HTTP_API_KEY")));
   });
 
   it("parses EAS project mappings from JSON", () => {

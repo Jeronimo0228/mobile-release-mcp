@@ -11,7 +11,7 @@ import { logger } from "./utils/logger.js";
 export function createMcpServer(config: Config): McpServer {
   const server = new McpServer({
     name: "mobile-release-mcp",
-    version: "0.2.0",
+    version: "0.2.1",
   });
 
   const tool = createToolRegistrar(server, config);

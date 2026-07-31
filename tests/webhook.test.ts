@@ -39,6 +39,13 @@ describe("EAS webhook signatures", () => {
     assert.equal(parsed.event, "BUILD");
     assert.equal(parsed.payload.platform, "ios");
   });
+
+  it("rejects webhooks when secret is missing", () => {
+    assert.throws(
+      () => parseEasWebhook("{}", null, ""),
+      /secret is not configured/,
+    );
+  });
 });
 
 describe("GitHub webhook signatures", () => {
@@ -55,7 +62,14 @@ describe("GitHub webhook signatures", () => {
 
   it("ignores non-workflow_run events", () => {
     const body = JSON.stringify({ action: "completed" });
-    const result = parseGitHubWebhook(body, null, "push", undefined);
+    const secret = "github-secret";
+    const signature = createHmac("sha256", secret).update(body).digest("hex");
+    const result = parseGitHubWebhook(
+      body,
+      `sha256=${signature}`,
+      "push",
+      secret,
+    );
     assert.equal(result, null);
   });
 });
