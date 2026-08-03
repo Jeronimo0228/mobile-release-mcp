@@ -1,6 +1,6 @@
 {
   "name": "mobile-release-mcp",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "MCP server for managing mobile app releases on App Store Connect and Google Play Console",
   "license": "MIT",
   "author": "Jerónimo Restrepo <jrestrepoa@eafit.edu.co>",
@@ -18,13 +18,16 @@
     "docs/SECURITY.md",
     "docs/TOOLS.md",
     "docs/TOOLSETS.md",
+    "docs/COMPARISON.md",
+    "docs/GAP_ANALYSIS.md",
     ".env.example"
   ],
   "overrides": {
     "gaxios": "7.3.0"
   },
   "bin": {
-    "mobile-release-mcp": "dist/index.js"
+    "mobile-release-mcp": "dist/index.js",
+    "storepilot": "dist/cli.js"
   },
   "scripts": {
     "build": "tsup",
@@ -34,6 +37,7 @@
     "test": "node scripts/run-tests.mjs",
     "smoke": "node --import tsx scripts/smoke-tools.ts",
     "snapshot": "node --import tsx scripts/live-snapshot.ts",
+    "storepilot": "node --import tsx src/cli.ts",
     "prepublishOnly": "npm run typecheck && npm run test && npm run build",
     "prepack": "npm run build"
   },

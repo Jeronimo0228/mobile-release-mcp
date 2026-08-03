@@ -315,6 +315,24 @@ export function registerAppleTools(tool: ToolRegistrar, client: AppleClient) {
     },
   );
 
+  tool.tool(
+    "apple_set_beta_group_public_link",
+    "Enable or disable TestFlight public link for a beta group",
+    {
+      betaGroupId: z.string().describe("TestFlight beta group ID"),
+      enabled: z.boolean().describe("Enable public link"),
+    },
+    async ({ betaGroupId, enabled }) => {
+      const result = await testflight.setBetaGroupPublicLink(
+        client,
+        betaGroupId,
+        enabled,
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
   // --- Analytics ---
 
   tool.tool(

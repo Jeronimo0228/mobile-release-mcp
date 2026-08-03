@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-08-03
+
+### Added
+
+- **`execute_release_intent`** — unified orchestrator (`rollout_production`, `promote_to_production`, `submit_for_review`, `configure_rollout`)
+- **`list_projects`** — multi-project registry (`STOREPILOT_PROJECTS_DIR`, `~/.config/storepilot/projects`)
+- **Plugin SDK** — `src/plugins/types.ts` hook contract for release gates
+- **CLI** — `storepilot status`, `storepilot snapshot`, `storepilot projects` (`dist/cli.js`)
+- **Google:** `google_upload_and_release`, `google_upload_deobfuscation_file`, `google_list/get_subscriptions`, internal app sharing uploads
+- **Apple:** `apple_set_beta_group_public_link`
+- **`docs/COMPARISON.md`** — competitive positioning vs published MCP servers
+
 ## [0.4.0] - 2026-08-03
 
 ### Added

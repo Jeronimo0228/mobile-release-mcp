@@ -9,6 +9,9 @@ import * as reviews from "../providers/google/reviews.js";
 import * as inAppProducts from "../providers/google/inAppProducts.js";
 import * as testers from "../providers/google/testers.js";
 import * as details from "../providers/google/details.js";
+import * as deobfuscation from "../providers/google/deobfuscation.js";
+import * as subscriptions from "../providers/google/subscriptions.js";
+import * as internalSharing from "../providers/google/internalSharing.js";
 import { withOptionalEdit } from "../providers/google/edits.js";
 import { toolSuccess } from "../utils/tool-registry.js";
 
@@ -719,5 +722,156 @@ export function registerGoogleTools(
       });
       return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
     },
+  );
+
+  tool.tool(
+    "google_upload_and_release",
+    "Upload AAB and assign to a track in one workflow (upload + track update + commit)",
+    {
+      packageName: z.string().describe("Android package name"),
+      bundlePath: z.string().describe("Absolute path to .aab file"),
+      track: z
+        .string()
+        .default("internal")
+        .describe("Target track (internal, alpha, beta, production)"),
+      status: z
+        .enum(["draft", "inProgress", "halted", "completed"])
+        .default("completed")
+        .describe("Release status after upload"),
+      releaseName: z.string().optional(),
+      releaseNotes: z
+        .array(
+          z.object({
+            language: z.string(),
+            text: z.string(),
+          }),
+        )
+        .optional(),
+      userFraction: z.number().min(0).max(1).optional(),
+      ackBundleInstallationWarning: z.boolean().optional(),
+    },
+    async ({
+      packageName,
+      bundlePath,
+      track,
+      status,
+      releaseName,
+      releaseNotes,
+      userFraction,
+      ackBundleInstallationWarning,
+    }) => {
+      const result = await releases.uploadBundleAndRelease(
+        client,
+        packageName,
+        bundlePath,
+        track as tracks.TrackName,
+        status,
+        { releaseName, releaseNotes, userFraction, ackBundleInstallationWarning },
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "google_upload_deobfuscation_file",
+    "Upload ProGuard/R8 mapping file for crash deobfuscation",
+    {
+      packageName: z.string().describe("Android package name"),
+      editId: z.string().describe("Active edit ID"),
+      apkVersionCode: z.number().int().describe("APK version code"),
+      mappingPath: z.string().describe("Absolute path to mapping.txt"),
+      deobfuscationFileType: z
+        .enum(["proguard", "nativeCode"])
+        .default("proguard"),
+    },
+    async ({
+      packageName,
+      editId,
+      apkVersionCode,
+      mappingPath,
+      deobfuscationFileType,
+    }) => {
+      const result = await deobfuscation.uploadDeobfuscationFile(
+        client,
+        packageName,
+        editId,
+        apkVersionCode,
+        mappingPath,
+        deobfuscationFileType,
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "google_list_subscriptions",
+    "List Google Play subscriptions (monetization.subscriptions v2 API)",
+    {
+      packageName: z.string().describe("Android package name"),
+      pageSize: z.number().int().min(1).max(100).optional(),
+    },
+    async ({ packageName, pageSize }) => {
+      const result = await subscriptions.listSubscriptions(
+        client,
+        packageName,
+        pageSize ?? 50,
+      );
+      return toolSuccess(result);
+    },
+  );
+
+  tool.tool(
+    "google_get_subscription",
+    "Get a Google Play subscription by product ID",
+    {
+      packageName: z.string().describe("Android package name"),
+      productId: z.string().describe("Subscription product ID"),
+    },
+    async ({ packageName, productId }) => {
+      const result = await subscriptions.getSubscription(
+        client,
+        packageName,
+        productId,
+      );
+      return toolSuccess(result);
+    },
+  );
+
+  tool.tool(
+    "google_upload_internal_sharing_apk",
+    "Upload APK to Google Play Internal App Sharing (instant share link)",
+    {
+      packageName: z.string().describe("Android package name"),
+      apkPath: z.string().describe("Absolute path to .apk file"),
+    },
+    async ({ packageName, apkPath }) => {
+      const result = await internalSharing.uploadInternalSharingApk(
+        client,
+        packageName,
+        apkPath,
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "google_upload_internal_sharing_bundle",
+    "Upload AAB to Google Play Internal App Sharing",
+    {
+      packageName: z.string().describe("Android package name"),
+      bundlePath: z.string().describe("Absolute path to .aab file"),
+    },
+    async ({ packageName, bundlePath }) => {
+      const result = await internalSharing.uploadInternalSharingBundle(
+        client,
+        packageName,
+        bundlePath,
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
   );
 }

@@ -1,3 +1,4 @@
+import { dirname } from "node:path";
 import { z } from "zod";
 import type { ToolRegistrar } from "../utils/tool-registry.js";
 import type { Config } from "../utils/config.js";
@@ -7,6 +8,7 @@ import { toolSuccess } from "../utils/tool-registry.js";
 import {
   loadProjectMemory,
   loadProjectProfile,
+  listRegisteredProjects,
   resolveStoreIds,
 } from "../core/project-profile.js";
 import {
@@ -21,6 +23,11 @@ import {
   planCreateTesterGroup,
   planPromoteRelease,
 } from "../core/release-workflows.js";
+import {
+  describeIntent,
+  executeReleaseIntent,
+  type ReleaseIntent,
+} from "../core/release-intent.js";
 
 const testerTypeSchema = z
   .enum(["internal", "closed", "open"])
@@ -259,6 +266,82 @@ export function registerOrchestratorTools(
         args,
       );
       return toolSuccess({ dryRun: false, ...result });
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "list_projects",
+    "List StorePilot projects from STOREPILOT_PROJECTS_DIR, ~/.config/storepilot/projects, and cwd discovery",
+    {
+      configPath: z
+        .string()
+        .optional()
+        .describe("Optional cwd hint for discovering storepilot.yaml"),
+    },
+    async ({ configPath }) => {
+      const projects = listRegisteredProjects(
+        configPath ? dirname(configPath) : process.cwd(),
+      );
+      return toolSuccess({ count: projects.length, projects });
+    },
+    { categories: ["read", "release"] },
+  );
+
+  const releaseIntentSchema = z.enum([
+    "rollout_production",
+    "promote_to_production",
+    "submit_for_review",
+    "configure_rollout",
+  ]) as z.ZodType<ReleaseIntent>;
+
+  tool.tool(
+    "execute_release_intent",
+    "High-level release orchestrator: rollout, promote, or submit for review across iOS/Android. dryRun defaults to true.",
+    {
+      intent: releaseIntentSchema.describe(
+        "rollout_production | promote_to_production | submit_for_review | configure_rollout",
+      ),
+      platforms: z
+        .array(z.enum(["ios", "android"]))
+        .optional()
+        .describe("Defaults to configured stores in storepilot.yaml"),
+      percentage: z
+        .number()
+        .optional()
+        .describe("Rollout % (0–100) or fraction (0–1) from storepilot defaultRollout"),
+      versionId: z.string().optional().describe("iOS App Store version ID"),
+      buildId: z.string().optional().describe("iOS build ID"),
+      fromTrack: z.string().optional(),
+      toTrack: z.string().optional(),
+      appleAppId: z.string().optional(),
+      googlePackageName: z.string().optional(),
+      configPath: z.string().optional(),
+      dryRun: dryRunSchema,
+    },
+    async (args) => {
+      const profile = resolveProfile(config, args.configPath);
+      const plan = describeIntent(args, profile);
+
+      if (args.dryRun) {
+        const result = await executeReleaseIntent(
+          appleClient,
+          googleClient,
+          profile,
+          args,
+          true,
+        );
+        return toolSuccess(result);
+      }
+
+      const result = await executeReleaseIntent(
+        appleClient,
+        googleClient,
+        profile,
+        args,
+        false,
+      );
+      return toolSuccess(result);
     },
     { categories: ["release", "destructive"], destructive: true },
   );

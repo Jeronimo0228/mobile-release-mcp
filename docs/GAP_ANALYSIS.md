@@ -22,19 +22,19 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 
 ---
 
-## Current coverage (v0.3.0)
+## Current coverage (v1.0.0)
 
 | Area | Apple | Google | Notes |
 |---|---|---|---|
-| Release & tracks | ~70% | ~65% | Strong; missing upload binary on Google |
-| TestFlight / testers | ~60% | ~50% | Groups + tracks; missing external link config |
-| Metadata & listings | ~50% | ~55% | Apple screenshots + compliance (v0.4) |
-| Reviews | ~40% | ~60% | List/reply; missing rejection resolution detail |
-| IAP / subscriptions | ~35% | ~30% | CRUD basics; missing modern pricing/subs v2 depth |
+| Release & tracks | ~85% | ~80% | Orchestrator + upload-and-release workflow |
+| TestFlight / testers | ~75% | ~55% | Public link + groups |
+| Metadata & listings | ~55% | ~55% | Screenshots + compliance |
+| Reviews | ~45% | ~60% | List/reply + review info |
+| IAP / subscriptions | ~40% | ~45% | Subscriptions list/get (Google v2) |
 | Signing / devices | ~50% | N/A | Apple certs/profiles/devices |
-| Analytics / vitals | ~25% | ~0% | ASC analytics read; no Play Reporting API |
-| Finance / orders | ~0% | ~0% | Not in scope for v1 |
-| Escape hatch | 0% | 0% | **Added in v0.3.1** |
+| Analytics / vitals | ~25% | ~0% | ASC analytics; Play Reporting via escape/plugin |
+| Escape hatch | ✅ | ✅ | Long-tail without tool explosion |
+| Orchestrator | ✅ | ✅ | Snapshot, intents, plugins, multi-project |
 
 ---
 
@@ -45,18 +45,16 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 | 1 | P0 | Google | Upload AAB/APK to edit | `google_upload_bundle` typed | v0.3.1 |
 | 2 | P0 | Apple | App Review submission + rejection detail | `apple_get_version_review_info` | v0.3.1 |
 | 3 | P0 | Both | Generic API for long tail | `apple_api_call`, `google_api_call` | v0.3.1 |
-| # | P | Platform | Gap | Strategy | Status |
-|---|---|---|---|---|---|
 | 4 | P0 | Apple | Screenshot / preview upload | Typed + binary helper | **v0.4.0** |
-| 5 | P0 | Google | Commit edit after upload workflow | Extend `promote_release` / workflow | Planned 0.4 |
+| 5 | P0 | Google | Commit edit after upload workflow | `google_upload_and_release` | **v1.0.0** |
 | 6 | P1 | Apple | Export compliance + content rights on version | Typed patch fields | **v0.4.0** |
-| 7 | P1 | Google | Play Developer Reporting (crashes, ANR) | Plugin or separate scope | Planned 0.5 |
-| 8 | P1 | Google | Subscriptions catalog (`monetization.subscriptions`) | Typed CRUD | Planned 0.5 |
-| 9 | P1 | Apple | Subscription pricing / localizations | Typed | Planned 0.5 |
-| 10 | P1 | Google | Internal app sharing | Typed | Planned 0.5 |
-| 11 | P1 | Apple | TestFlight public link + beta review detail | Typed | Planned 0.4 |
-| 12 | P1 | Google | Deobfuscation (ProGuard) file upload | Typed | Planned 0.4 |
-| 13 | P1 | Both | Multi-account / multi-app registry | Config + `storepilot.yaml` profiles | Planned 0.5 |
+| 7 | P1 | Google | Play Developer Reporting (crashes, ANR) | Plugin or escape | Backlog (escape) |
+| 8 | P1 | Google | Subscriptions catalog (`monetization.subscriptions`) | Typed list/get | **v1.0.0** |
+| 9 | P1 | Apple | Subscription pricing / localizations | Typed | Backlog |
+| 10 | P1 | Google | Internal app sharing | Typed upload | **v1.0.0** |
+| 11 | P1 | Apple | TestFlight public link + beta review detail | Typed | **v1.0.0** |
+| 12 | P1 | Google | Deobfuscation (ProGuard) file upload | Typed | **v1.0.0** |
+| 13 | P1 | Both | Multi-account / multi-app registry | `list_projects` | **v1.0.0** |
 | 14 | P2 | Apple | Custom Product Pages | Escape or plugin | Backlog |
 | 15 | P2 | Apple | In-App Events | Escape or plugin | Backlog |
 | 16 | P2 | Google | Orders / refunds API | Escape + docs | Backlog |
@@ -92,7 +90,7 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 | v0.3.0 | 107 | 0 | ~60% release value |
 | v0.3.1 | 111 | 2 | ~65% + long tail |
 | v0.4.0 | ~120 | 2 | ~80% release value |
-| v1.0.0 | ~150 | 2 + plugins | ~95% release value |
+| v1.0.0 | ~135 | 2 + plugins | ~95% release value |
 
 ---
 

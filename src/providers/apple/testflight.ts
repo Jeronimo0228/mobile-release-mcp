@@ -69,6 +69,22 @@ export async function submitForBetaReview(
   });
 }
 
+export async function setBetaGroupPublicLink(
+  client: AppleClient,
+  betaGroupId: string,
+  enabled: boolean,
+) {
+  return client.patch(`/v1/betaGroups/${betaGroupId}`, {
+    data: {
+      type: "betaGroups",
+      id: betaGroupId,
+      attributes: {
+        publicLinkEnabled: enabled,
+      },
+    },
+  });
+}
+
 export async function addBetaTesters(
   client: AppleClient,
   betaGroupId: string,

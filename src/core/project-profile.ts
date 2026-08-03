@@ -1,9 +1,11 @@
 import {
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   writeFileSync,
 } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import type { ProjectMemory, ProjectMemoryEntry, ProjectProfile } from "./types.js";
@@ -217,4 +219,70 @@ export function resolveAndroidTrack(
   fallback: string,
 ): string {
   return profile?.release?.tracks?.[kind] ?? fallback;
+}
+
+export interface ProjectRegistryEntry {
+  project: string;
+  name?: string;
+  configPath: string;
+  projectDir: string;
+  iosAppId?: string;
+  androidPackage?: string;
+}
+
+function projectRegistryDirs(): string[] {
+  const dirs = new Set<string>();
+  if (process.env.STOREPILOT_PROJECTS_DIR) {
+    dirs.add(resolve(process.env.STOREPILOT_PROJECTS_DIR));
+  }
+  dirs.add(join(homedir(), ".config", "storepilot", "projects"));
+  return [...dirs];
+}
+
+export function listRegisteredProjects(
+  startDir = process.cwd(),
+): ProjectRegistryEntry[] {
+  const seen = new Set<string>();
+  const entries: ProjectRegistryEntry[] = [];
+
+  const addProfile = (profile: ProjectProfile) => {
+    if (!profile.configPath) return;
+    if (seen.has(profile.configPath)) return;
+    seen.add(profile.configPath);
+    entries.push({
+      project: profile.project,
+      name: profile.name,
+      configPath: profile.configPath,
+      projectDir: profile.projectDir ?? dirname(profile.configPath),
+      iosAppId: profile.stores?.ios?.appId,
+      androidPackage: profile.stores?.android?.package,
+    });
+  };
+
+  for (const dir of projectRegistryDirs()) {
+    if (!existsSync(dir)) continue;
+    for (const item of readdirSync(dir, { withFileTypes: true })) {
+      if (!item.isDirectory()) continue;
+      const subdir = join(dir, item.name);
+      const configPath = findProjectConfigPath(subdir);
+      if (!configPath) continue;
+      try {
+        addProfile(loadProjectProfile(configPath)!);
+      } catch {
+        // skip invalid profiles
+      }
+    }
+  }
+
+  const cwdConfig =
+    process.env.STOREPILOT_CONFIG_PATH ?? findProjectConfigPath(startDir);
+  if (cwdConfig && existsSync(cwdConfig)) {
+    try {
+      addProfile(loadProjectProfile(cwdConfig)!);
+    } catch {
+      // skip
+    }
+  }
+
+  return entries.sort((a, b) => a.project.localeCompare(b.project));
 }
