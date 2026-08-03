@@ -30,6 +30,8 @@ const DESTRUCTIVE_TOOLS = new Set([
   "trigger_full_release",
   "promote_release",
   "configure_rollout",
+  "google_upload_bundle",
+  "google_upload_apk",
 ]);
 
 const RELEASE_TOOLS = new Set([
@@ -55,6 +57,10 @@ const RELEASE_TOOLS = new Set([
   "create_tester_group",
   "promote_release",
   "configure_rollout",
+  "google_upload_bundle",
+  "google_upload_apk",
+  "apple_get_version_review_info",
+  "apple_list_version_review_info",
 ]);
 
 function inferCategories(name: string): ToolCategory[] {

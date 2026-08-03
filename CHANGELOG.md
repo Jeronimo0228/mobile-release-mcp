@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-08-03
+
+### Added
+
+- `docs/GAP_ANALYSIS.md` — prioritized top-20 API gaps and coverage roadmap
+- `apple_get_version_review_info`, `apple_list_version_review_info` — review/rejection context
+- `google_upload_bundle`, `google_upload_apk` — binary upload to Play edits
+- `apple_api_call`, `google_api_call` — escape hatches for long-tail API coverage (writes require `confirm: true`)
+
 ## [0.3.0] - 2026-08-03
 
 ### Added
@@ -95,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
+[0.3.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.3.1
 [0.3.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.3.0
 [0.2.3]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.3
 [0.2.2]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.2

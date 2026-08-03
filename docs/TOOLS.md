@@ -1,6 +1,6 @@
 # Tools reference
 
-101 MCP tools across iOS (65), Android (32), shared (4), plus **6 orchestrator tools** when using StorePilot workflows.
+101 MCP tools across iOS (67), Android (34), shared (4), plus **6 orchestrator** and **6 escape/upload** tools.
 
 > **Tip:** Copy `storepilot.example.yaml` to `storepilot.yaml` in your app repo so orchestrator tools resolve app IDs automatically.
 
@@ -43,6 +43,17 @@ High-level release workflows. **`dryRun` defaults to `true`** — preview first,
 | `create_tester_group` | release | TestFlight group + Play track testers |
 | `promote_release` | release | Android track promotion or iOS submit for review |
 | `configure_rollout` | release | Staged rollout % (Android) or phased release (iOS) |
+
+## Escape hatch & uploads (6)
+
+| Tool | Category | Description |
+|---|---|---|
+| `apple_get_version_review_info` | read | Review submission + contact details for a version |
+| `apple_list_version_review_info` | read | Review info for recent versions of an app |
+| `apple_api_call` | admin | Raw ASC API (`GET` free; writes need `confirm: true`) |
+| `google_upload_bundle` | release | Upload AAB (auto commit optional) |
+| `google_upload_apk` | release | Upload APK to an edit |
+| `google_api_call` | admin | Raw Play API via dot notation (`get`/`list` free) |
 
 ---
 

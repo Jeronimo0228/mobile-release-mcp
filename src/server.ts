@@ -4,6 +4,7 @@ import { AppleClient } from "./providers/apple/client.js";
 import { GooglePlayClient } from "./providers/google/client.js";
 import { registerAppleTools } from "./tools/apple-tools.js";
 import { registerGoogleTools } from "./tools/google-tools.js";
+import { registerEscapeTools } from "./tools/escape-tools.js";
 import { registerOrchestratorTools } from "./tools/orchestrator-tools.js";
 import { registerSharedTools } from "./tools/shared-tools.js";
 import { createToolRegistrar } from "./utils/tool-registry.js";
@@ -44,6 +45,7 @@ export function createMcpServer(config: Config): McpServer {
 
   registerSharedTools(tool, appleClient, googleClient, config);
   registerOrchestratorTools(tool, appleClient, googleClient, config);
+  registerEscapeTools(tool, appleClient, googleClient);
   logger.info(`Shared tools registered (toolset: ${config.toolset})`);
 
   return server;
