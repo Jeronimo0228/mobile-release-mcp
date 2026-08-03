@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * StorePilot CLI — status and snapshot without an MCP client.
  *
