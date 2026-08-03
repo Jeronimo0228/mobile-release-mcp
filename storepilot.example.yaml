@@ -1,0 +1,28 @@
+# StorePilot project profile — copy to storepilot.yaml in your app repo root.
+# Docs: docs/TOOLS.md (Orchestrator tools)
+
+project: plazario
+name: HRIP / Plazario
+
+stores:
+  ios:
+    appId: "6793579931"
+    bundleId: com.hrip.app
+  android:
+    package: com.hrip.app
+
+build:
+  provider: eas
+  # projectId: your-eas-project-id
+
+release:
+  defaultRollout: 0.1
+  tracks:
+    internal: internal
+    closed: alpha
+    open: beta
+    production: production
+
+locales:
+  - es-CO
+  - en-US

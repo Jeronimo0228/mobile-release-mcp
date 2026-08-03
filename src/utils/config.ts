@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { loadProjectProfile } from "../core/project-profile.js";
+import type { ProjectProfile } from "../core/types.js";
 import { logger } from "./logger.js";
 import { resolveSafeStoragePath, safeJsonParse } from "./security.js";
 
@@ -39,6 +41,7 @@ export interface Config {
   mcpAllowedOrigins: string[];
   toolset: Toolset;
   easProjectMappings: EasProjectMapping[];
+  projectProfile?: ProjectProfile;
 }
 
 export interface ConfigValidation {
@@ -153,7 +156,18 @@ export function loadConfig(): Config {
     mcpAllowedOrigins: parseAllowedOrigins(process.env.MCP_ALLOWED_ORIGINS),
     toolset: parseToolset(process.env.MCP_TOOLSET),
     easProjectMappings: parseEasProjectMappings(),
+    projectProfile: loadProjectProfileSafe(),
   };
+}
+
+function loadProjectProfileSafe(): ProjectProfile | undefined {
+  try {
+    return loadProjectProfile();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.warn(`StorePilot config not loaded: ${message}`);
+    return undefined;
+  }
 }
 
 export function validateConfig(config: Config): ConfigValidation {
@@ -210,6 +224,12 @@ export function validateConfig(config: Config): ConfigValidation {
   if (config.toolset !== "all") {
     warnings.push(
       `MCP_TOOLSET=${config.toolset} — only a subset of tools is registered.`,
+    );
+  }
+
+  if (config.projectProfile) {
+    warnings.push(
+      `StorePilot project loaded: ${config.projectProfile.project} (${config.projectProfile.configPath})`,
     );
   }
 

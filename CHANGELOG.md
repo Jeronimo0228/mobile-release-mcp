@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-08-03
+
+### Added
+
+- **StorePilot project profile** — `storepilot.yaml` auto-discovery + `.storepilot/memory.json` release history
+- **Orchestrator tools** (release toolset):
+  - `load_project` — load profile and memory
+  - `get_release_snapshot` — production vs candidate, blockers, next actions
+  - `explain_release_blockers` — human-readable release guidance
+  - `create_tester_group` — TestFlight + Play track testers (dry-run by default)
+  - `promote_release` — track promotion / submit for review (dry-run by default)
+  - `configure_rollout` — staged rollout % or iOS phased release (dry-run by default)
+- MCP resource `project://memory`
+- `storepilot.example.yaml` template
+- Unit tests for profile parsing and release heuristics
+
+### Changed
+
+- Destructive workflow tools allow `dryRun: true` without `confirm`; execution requires `dryRun: false` + `confirm: true`
+- `apple_get_price_tiers` requires `appId` (uses app price points API)
+
 ## [0.2.3] - 2026-08-03
 
 ### Added
@@ -74,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
+[0.3.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.3.0
 [0.2.3]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.3
 [0.2.2]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.1

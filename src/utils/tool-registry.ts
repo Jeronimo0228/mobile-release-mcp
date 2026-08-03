@@ -28,6 +28,8 @@ const DESTRUCTIVE_TOOLS = new Set([
   "google_delete_in_app_product",
   "google_halt_release",
   "trigger_full_release",
+  "promote_release",
+  "configure_rollout",
 ]);
 
 const RELEASE_TOOLS = new Set([
@@ -47,6 +49,12 @@ const RELEASE_TOOLS = new Set([
   "google_commit_edit",
   "google_validate_edit",
   "google_create_edit",
+  "get_release_snapshot",
+  "explain_release_blockers",
+  "load_project",
+  "create_tester_group",
+  "promote_release",
+  "configure_rollout",
 ]);
 
 function inferCategories(name: string): ToolCategory[] {
@@ -156,12 +164,13 @@ export function createToolRegistrar(
 
       server.tool(name, description, finalSchema, async (args) => {
         try {
-          if (destructive && args.confirm !== true) {
+          const dryRun = args.dryRun === true;
+          if (destructive && args.confirm !== true && !dryRun) {
             throw new ToolError(
-              `Tool "${name}" requires confirm: true`,
+              `Tool "${name}" requires confirm: true when dryRun is false`,
               "CONFIRMATION_REQUIRED",
               false,
-              "Re-run the tool with confirm: true after verifying parameters.",
+              "Run with dryRun: true to preview, then dryRun: false and confirm: true to execute.",
             );
           }
 

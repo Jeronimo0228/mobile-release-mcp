@@ -22,6 +22,8 @@ MCP_TOOLSET=release
 
 Includes tools like:
 
+- `load_project`, `get_release_snapshot`, `explain_release_blockers`
+- `create_tester_group`, `promote_release`, `configure_rollout` (dry-run by default)
 - `list_pending_webhooks`, `get_release_status`, `trigger_full_release`
 - `apple_list_apps`, `apple_list_builds`, `apple_create_app_version`, `apple_submit_for_review`
 - `google_list_tracks`, `google_create_release`, `google_promote_release`

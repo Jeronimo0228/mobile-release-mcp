@@ -1,6 +1,8 @@
 # Tools reference
 
-101 MCP tools across iOS (65), Android (32), and shared (4).
+101 MCP tools across iOS (65), Android (32), shared (4), plus **6 orchestrator tools** when using StorePilot workflows.
+
+> **Tip:** Copy `storepilot.example.yaml` to `storepilot.yaml` in your app repo so orchestrator tools resolve app IDs automatically.
 
 > **Tip:** Use `MCP_TOOLSET=release` or `readonly` to reduce the tool surface. See [TOOLSETS.md](./TOOLSETS.md).
 
@@ -22,9 +24,25 @@ Failures return structured errors with `code`, `retryable`, and `suggestion`.
 These tools require `"confirm": true`:
 
 - `trigger_full_release`
+- `promote_release`, `configure_rollout` (when `dryRun: false`)
 - `apple_submit_for_review`, `apple_submit_for_beta_review`
 - `apple_delete_*`, `apple_remove_*`, `apple_revoke_*`, `apple_disable_capability`
 - `google_delete_*`, `google_halt_release`
+
+---
+
+## Orchestrator / StorePilot (6)
+
+High-level release workflows. **`dryRun` defaults to `true`** — preview first, then set `dryRun: false` and `confirm: true` to execute writes.
+
+| Tool | Category | Description |
+|---|---|---|
+| `load_project` | read | Load `storepilot.yaml` + `.storepilot/memory.json` |
+| `get_release_snapshot` | read | Production vs candidate, blockers, next actions |
+| `explain_release_blockers` | read | Human-readable release guidance |
+| `create_tester_group` | release | TestFlight group + Play track testers |
+| `promote_release` | release | Android track promotion or iOS submit for review |
+| `configure_rollout` | release | Staged rollout % (Android) or phased release (iOS) |
 
 ---
 
