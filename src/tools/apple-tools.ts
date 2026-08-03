@@ -929,10 +929,26 @@ export function registerAppleTools(tool: ToolRegistrar, client: AppleClient) {
 
   tool.tool(
     "apple_get_price_tiers",
-    "List all available App Store price tiers",
-    {},
-    async () => {
-      const result = await submissions.getAppPriceTiers(client);
+    "List available App Store price points for an app in a territory",
+    {
+      appId: z.string().describe("The App Store Connect app ID"),
+      territory: z
+        .string()
+        .optional()
+        .describe("ISO territory code (default: USA)"),
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .max(200)
+        .optional()
+        .describe("Max price points to return (default: 200)"),
+    },
+    async ({ appId, territory, limit }) => {
+      const result = await submissions.listAppPricePoints(client, appId, {
+        territory,
+        limit,
+      });
       return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
     },
   );

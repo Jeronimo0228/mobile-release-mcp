@@ -42,7 +42,6 @@ export async function listAppStoreVersions(
   const params: Record<string, string> = {
     "fields[appStoreVersions]":
       "versionString,appStoreState,releaseType,platform,createdDate",
-    sort: "-createdDate",
   };
   if (filters?.state)
     params["filter[appStoreState]"] = filters.state;

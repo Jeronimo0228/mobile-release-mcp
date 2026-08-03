@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2026-08-03
+
+### Added
+
+- `npm run smoke` — live read-only smoke test script for Apple/Google providers (requires credentials)
+- `withOptionalEdit` helper for Google Play read tools when `editId` is omitted
+- Regression tests for invalid Apple sort params and Google optional edits
+
+### Changed
+
+- `apple_get_price_tiers` now uses `/v1/apps/{appId}/appPricePoints` (Apple removed global `/v1/appPriceTiers`); requires `appId`, optional `territory` and `limit`
+- `google_list_in_app_products` migrated to `monetization.onetimeproducts.list` (legacy API deprecated)
+
+### Fixed
+
+- Apple: remove invalid `sort` params from `listAppStoreVersions`, `listDevices`, `listCertificates`, and `listInAppPurchases`
+- Apple: drop invalid `referenceName` field from in-app purchase list requests
+- Google: read tools (`list_tracks`, `list_listings`, `get_app_details`, `list_bundles`, `get_testers`, `get_country_availability`, `list_images`) auto-create temporary edits when `editId` is omitted
+- Google: `list_reviews` returns structured `{ success, data }` response
+
 ## [0.2.2] - 2026-07-31
 
 ### Changed
@@ -54,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
+[0.2.3]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.3
 [0.2.2]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.0

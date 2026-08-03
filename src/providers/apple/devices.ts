@@ -11,7 +11,6 @@ export async function listDevices(
 ) {
   const params: Record<string, string> = {
     "fields[devices]": "name,udid,platform,status,deviceClass,model,addedDate",
-    sort: "-addedDate",
   };
   if (filters?.platform) params["filter[platform]"] = filters.platform;
   if (filters?.status) params["filter[status]"] = filters.status;

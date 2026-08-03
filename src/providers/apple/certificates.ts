@@ -10,7 +10,6 @@ export async function listCertificates(
   const params: Record<string, string> = {
     "fields[certificates]":
       "name,certificateType,expirationDate,platform,serialNumber",
-    sort: "-expirationDate",
   };
   if (filters?.certificateType)
     params["filter[certificateType]"] = filters.certificateType;
@@ -48,7 +47,6 @@ export async function listProfiles(
   const params: Record<string, string> = {
     "fields[profiles]":
       "name,profileType,profileState,expirationDate,platform",
-    sort: "-expirationDate",
   };
   if (filters?.profileType)
     params["filter[profileType]"] = filters.profileType;

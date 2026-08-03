@@ -9,6 +9,15 @@ import * as reviews from "../providers/google/reviews.js";
 import * as inAppProducts from "../providers/google/inAppProducts.js";
 import * as testers from "../providers/google/testers.js";
 import * as details from "../providers/google/details.js";
+import { withOptionalEdit } from "../providers/google/edits.js";
+import { toolSuccess } from "../utils/tool-registry.js";
+
+const optionalEditId = z
+  .string()
+  .optional()
+  .describe(
+    "Active edit ID. Omit for read-only calls — a temporary edit is created and discarded automatically.",
+  );
 
 export function registerGoogleTools(
   tool: ToolRegistrar,
@@ -60,11 +69,13 @@ export function registerGoogleTools(
     "List all tracks (internal, alpha, beta, production) and their releases",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
     },
     async ({ packageName, editId }) => {
-      const result = await tracks.listTracks(client, packageName, editId);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        tracks.listTracks(client, packageName, id),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -318,7 +329,7 @@ export function registerGoogleTools(
     "List uploaded images for a Google Play listing",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
       language: z.string().describe("BCP-47 language code"),
       imageType: z
         .enum([
@@ -334,14 +345,10 @@ export function registerGoogleTools(
         .describe("Type of images to list"),
     },
     async ({ packageName, editId, language, imageType }) => {
-      const result = await images.listImages(
-        client,
-        packageName,
-        editId,
-        language,
-        imageType,
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        images.listImages(client, packageName, id, language, imageType),
       );
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return toolSuccess(result);
     },
   );
 
@@ -382,8 +389,11 @@ export function registerGoogleTools(
       maxResults: z.number().optional().describe("Max results to return"),
     },
     async ({ packageName, translationLanguage, maxResults }) => {
-      const result = await reviews.listReviews(client, packageName, { translationLanguage, maxResults });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await reviews.listReviews(client, packageName, {
+        translationLanguage,
+        maxResults,
+      });
+      return toolSuccess(result ?? { reviews: [] });
     },
   );
 
@@ -423,11 +433,16 @@ export function registerGoogleTools(
     {
       packageName: z.string().describe("Android package name"),
       maxResults: z.number().optional().describe("Max results to return"),
-      startIndex: z.number().optional().describe("Start index for pagination"),
+      pageToken: z.string().optional().describe("Pagination token"),
     },
-    async ({ packageName, maxResults, startIndex }) => {
-      const result = await inAppProducts.listInAppProducts(client, packageName, maxResults, startIndex);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+    async ({ packageName, maxResults, pageToken }) => {
+      const result = await inAppProducts.listInAppProducts(
+        client,
+        packageName,
+        maxResults,
+        pageToken,
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -510,12 +525,14 @@ export function registerGoogleTools(
     "Get testers for a specific track",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
       track: z.string().describe("Track name"),
     },
     async ({ packageName, editId, track }) => {
-      const result = await testers.getTesters(client, packageName, editId, track);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        testers.getTesters(client, packageName, id, track),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -539,12 +556,14 @@ export function registerGoogleTools(
     "Get country availability for a track",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
       track: z.string().describe("Track name"),
     },
     async ({ packageName, editId, track }) => {
-      const result = await testers.getCountryAvailability(client, packageName, editId, track);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        testers.getCountryAvailability(client, packageName, id, track),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -555,11 +574,13 @@ export function registerGoogleTools(
     "Get app-level details (contact info, default language)",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
     },
     async ({ packageName, editId }) => {
-      const result = await details.getAppDetails(client, packageName, editId);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        details.getAppDetails(client, packageName, id),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -585,11 +606,13 @@ export function registerGoogleTools(
     "List all uploaded AAB bundles for an app in an edit",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
     },
     async ({ packageName, editId }) => {
-      const result = await details.listBundles(client, packageName, editId);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        details.listBundles(client, packageName, id),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -598,11 +621,13 @@ export function registerGoogleTools(
     "List all uploaded APKs for an app in an edit",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
     },
     async ({ packageName, editId }) => {
-      const result = await details.listApks(client, packageName, editId);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        details.listApks(client, packageName, id),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -611,11 +636,13 @@ export function registerGoogleTools(
     "List all store listings for an app across all languages",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
     },
     async ({ packageName, editId }) => {
-      const result = await listings.getListings(client, packageName, editId);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        listings.getListings(client, packageName, id),
+      );
+      return toolSuccess(result);
     },
   );
 
@@ -624,12 +651,14 @@ export function registerGoogleTools(
     "Get a specific store listing by language",
     {
       packageName: z.string().describe("Android package name"),
-      editId: z.string().describe("Active edit ID"),
+      editId: optionalEditId,
       language: z.string().describe("BCP-47 language code"),
     },
     async ({ packageName, editId, language }) => {
-      const result = await listings.getListing(client, packageName, editId, language);
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      const result = await withOptionalEdit(client, packageName, editId, (id) =>
+        listings.getListing(client, packageName, id, language),
+      );
+      return toolSuccess(result);
     },
   );
 

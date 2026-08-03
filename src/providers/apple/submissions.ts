@@ -60,9 +60,26 @@ export async function setAppPricing(
   });
 }
 
-export async function getAppPriceTiers(client: AppleClient) {
-  return client.get("/v1/appPriceTiers", {
-    "fields[appPriceTiers]": "priceTierNumber",
-    limit: "87",
+export async function listAppPricePoints(
+  client: AppleClient,
+  appId: string,
+  options?: {
+    territory?: string;
+    limit?: number;
+  },
+) {
+  const territory = options?.territory ?? "USA";
+  const limit = options?.limit ?? 200;
+
+  return client.get(`/v1/apps/${appId}/appPricePoints`, {
+    "fields[appPricePoints]": "customerPrice,proceeds",
+    "filter[territory]": territory,
+    limit: String(limit),
+    include: "territory",
   });
+}
+
+/** @deprecated Use listAppPricePoints — global /v1/appPriceTiers was removed by Apple */
+export async function getAppPriceTiers(client: AppleClient, appId: string, territory?: string) {
+  return listAppPricePoints(client, appId, { territory });
 }

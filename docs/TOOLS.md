@@ -88,7 +88,7 @@ These tools require `"confirm": true`:
 | `apple_list_app_categories` | read | Available categories |
 | `apple_list_territories` | read | Available territories |
 | `apple_get_app_availability` | read | Territory availability |
-| `apple_get_price_tiers` | read | Price tiers |
+| `apple_get_price_tiers` | read | App price points by territory (requires `appId`) |
 
 ## Apple — Analytics (5)
 

@@ -5,9 +5,7 @@ export async function listInAppPurchases(
   appId: string,
 ) {
   return client.get(`/v1/apps/${appId}/inAppPurchasesV2`, {
-    "fields[inAppPurchases]":
-      "name,productId,inAppPurchaseType,state,referenceName",
-    sort: "-referenceName",
+    "fields[inAppPurchases]": "name,productId,inAppPurchaseType,state",
   });
 }
 
