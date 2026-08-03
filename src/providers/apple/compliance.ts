@@ -1,0 +1,250 @@
+import type { AppleClient } from "./client.js";
+import * as apps from "./apps.js";
+import * as versions from "./versions.js";
+import * as metadata from "./metadata.js";
+import * as screenshots from "./screenshots.js";
+
+export type ContentRightsDeclaration =
+  | "DOES_NOT_USE_THIRD_PARTY_CONTENT"
+  | "USES_THIRD_PARTY_CONTENT";
+
+export async function getContentRights(client: AppleClient, appId: string) {
+  const app = (await apps.getApp(client, appId)) as {
+    data: {
+      id: string;
+      attributes?: { contentRightsDeclaration?: string; primaryLocale?: string };
+    };
+  };
+  return {
+    appId,
+    contentRightsDeclaration: app.data.attributes?.contentRightsDeclaration,
+    primaryLocale: app.data.attributes?.primaryLocale,
+  };
+}
+
+export async function setContentRights(
+  client: AppleClient,
+  appId: string,
+  contentRightsDeclaration: ContentRightsDeclaration,
+) {
+  return client.patch(`/v1/apps/${appId}`, {
+    data: {
+      type: "apps",
+      id: appId,
+      attributes: { contentRightsDeclaration },
+    },
+  });
+}
+
+export async function getBuildExportCompliance(
+  client: AppleClient,
+  buildId: string,
+) {
+  const build = await client.get(`/v1/builds/${buildId}`, {
+    "fields[builds]":
+      "version,processingState,usesNonExemptEncryption,expirationDate",
+    include: "buildBetaDetail,app",
+  });
+
+  let betaDetail: unknown = null;
+  try {
+    betaDetail = await client.get(
+      `/v1/builds/${buildId}/buildBetaDetail`,
+      {
+        "fields[buildBetaDetails]":
+          "autoNotifyEnabled,internalBuildState,externalBuildState",
+      },
+    );
+  } catch {
+    betaDetail = null;
+  }
+
+  return { build, buildBetaDetail: betaDetail };
+}
+
+export async function setBuildExportCompliance(
+  client: AppleClient,
+  buildId: string,
+  attributes: {
+    usesNonExemptEncryption: boolean;
+    encryptionUpdated?: boolean;
+  },
+) {
+  return client.patch(`/v1/builds/${buildId}`, {
+    data: {
+      type: "builds",
+      id: buildId,
+      attributes: {
+        usesNonExemptEncryption: attributes.usesNonExemptEncryption,
+        ...(attributes.encryptionUpdated !== undefined
+          ? { encryptionUpdated: attributes.encryptionUpdated }
+          : {}),
+      },
+    },
+  });
+}
+
+export interface SubmissionReadinessItem {
+  code: string;
+  status: "ok" | "missing" | "warning";
+  message: string;
+  suggestion?: string;
+}
+
+export async function getSubmissionReadiness(
+  client: AppleClient,
+  options: {
+    appId: string;
+    versionId: string;
+    locale?: string;
+    screenshotDisplayType?: screenshots.ScreenshotDisplayType;
+  },
+): Promise<{
+  ready: boolean;
+  checks: SubmissionReadinessItem[];
+}> {
+  const checks: SubmissionReadinessItem[] = [];
+  const locale = options.locale;
+
+  const rights = await getContentRights(client, options.appId);
+  if (rights.contentRightsDeclaration) {
+    checks.push({
+      code: "CONTENT_RIGHTS",
+      status: "ok",
+      message: `Content rights set: ${rights.contentRightsDeclaration}`,
+    });
+  } else {
+    checks.push({
+      code: "CONTENT_RIGHTS",
+      status: "missing",
+      message: "App content rights declaration is not set",
+      suggestion:
+        "Use apple_set_content_rights with DOES_NOT_USE_THIRD_PARTY_CONTENT or USES_THIRD_PARTY_CONTENT.",
+    });
+  }
+
+  const version = (await versions.getAppStoreVersion(
+    client,
+    options.versionId,
+  )) as {
+    data: {
+      attributes?: { appStoreState?: string };
+      relationships?: { build?: { data?: { id?: string } | null } };
+    };
+  };
+
+  const buildId = version.data.relationships?.build?.data?.id;
+  if (!buildId) {
+    checks.push({
+      code: "BUILD_ASSIGNED",
+      status: "missing",
+      message: "No build assigned to this App Store version",
+      suggestion: "Use apple_assign_build_to_version.",
+    });
+  } else {
+    checks.push({
+      code: "BUILD_ASSIGNED",
+      status: "ok",
+      message: `Build assigned: ${buildId}`,
+    });
+
+    const compliance = await getBuildExportCompliance(client, buildId);
+    const usesEncryption = (
+      compliance.build as {
+        data?: { attributes?: { usesNonExemptEncryption?: boolean } };
+      }
+    ).data?.attributes?.usesNonExemptEncryption;
+
+    if (usesEncryption === false) {
+      checks.push({
+        code: "EXPORT_COMPLIANCE",
+        status: "ok",
+        message: "Export compliance: app does not use non-exempt encryption",
+      });
+    } else if (usesEncryption === true) {
+      checks.push({
+        code: "EXPORT_COMPLIANCE",
+        status: "warning",
+        message: "App declares non-exempt encryption — verify export documentation",
+        suggestion:
+          "Complete export compliance in App Store Connect or set usesNonExemptEncryption via apple_set_export_compliance if applicable.",
+      });
+    } else {
+      checks.push({
+        code: "EXPORT_COMPLIANCE",
+        status: "missing",
+        message: "Export compliance (usesNonExemptEncryption) not declared on build",
+        suggestion:
+          "Use apple_set_export_compliance with usesNonExemptEncryption: false for typical apps.",
+      });
+    }
+  }
+
+  const targetLocale = locale ?? rights.primaryLocale;
+  if (targetLocale) {
+    try {
+      const localizations = (await metadata.getVersionLocalizations(
+        client,
+        options.versionId,
+      )) as { data: Array<{ id: string; attributes: { locale: string } }> };
+
+      const localization = localizations.data?.find(
+        (l) => l.attributes.locale === targetLocale,
+      );
+
+      if (!localization) {
+        checks.push({
+          code: "SCREENSHOTS",
+          status: "missing",
+          message: `No localization for locale ${targetLocale}`,
+          suggestion: "Create localization or use apple_upload_screenshot (creates if needed).",
+        });
+      } else {
+        const sets = await screenshots.listScreenshotSets(
+          client,
+          localization.id,
+        );
+        const displayType =
+          options.screenshotDisplayType ?? "APP_IPHONE_65";
+        const set = sets.data?.find(
+          (s) => s.attributes.screenshotDisplayType === displayType,
+        );
+
+        if (set) {
+          const shots = await screenshots.listScreenshotsInSet(client, set.id);
+          const count = (shots as { data?: unknown[] }).data?.length ?? 0;
+          if (count > 0) {
+            checks.push({
+              code: "SCREENSHOTS",
+              status: "ok",
+              message: `${count} screenshot(s) for ${targetLocale} (${displayType})`,
+            });
+          } else {
+            checks.push({
+              code: "SCREENSHOTS",
+              status: "missing",
+              message: `No screenshots uploaded for ${targetLocale} (${displayType})`,
+              suggestion: "Use apple_upload_screenshot.",
+            });
+          }
+        } else {
+          checks.push({
+            code: "SCREENSHOTS",
+            status: "missing",
+            message: `No screenshot set for ${targetLocale} (${displayType})`,
+            suggestion: "Use apple_upload_screenshot.",
+          });
+        }
+      }
+    } catch (err) {
+      checks.push({
+        code: "SCREENSHOTS",
+        status: "warning",
+        message: `Could not verify screenshots: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
+  }
+
+  const ready = !checks.some((c) => c.status === "missing");
+  return { ready, checks };
+}

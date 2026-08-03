@@ -198,6 +198,25 @@ High-level release workflows. **`dryRun` defaults to `true`** — preview first,
 | `apple_respond_to_review` | admin | Post developer response |
 | `apple_delete_review_response` | destructive | Delete response. Requires `confirm: true` |
 
+## Apple — Screenshots (4)
+
+| Tool | Category | Description |
+|---|---|---|
+| `apple_list_screenshot_sets` | read | Screenshot sets for a version locale |
+| `apple_list_screenshots` | read | Screenshots in a set |
+| `apple_upload_screenshot` | release | Upload one screenshot (confirm required) |
+| `apple_upload_screenshots` | release | Upload multiple screenshots (confirm required) |
+
+## Apple — Compliance & preflight (5)
+
+| Tool | Category | Description |
+|---|---|---|
+| `apple_get_content_rights` | read | Third-party content declaration |
+| `apple_set_content_rights` | destructive | Set content rights (confirm required) |
+| `apple_get_export_compliance` | read | Build encryption / export settings |
+| `apple_set_export_compliance` | destructive | Declare usesNonExemptEncryption (confirm required) |
+| `apple_get_submission_readiness` | read | Preflight before App Store submit |
+
 ---
 
 ## Google — Edits (3)

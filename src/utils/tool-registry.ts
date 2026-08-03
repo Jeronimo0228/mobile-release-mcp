@@ -32,6 +32,10 @@ const DESTRUCTIVE_TOOLS = new Set([
   "configure_rollout",
   "google_upload_bundle",
   "google_upload_apk",
+  "apple_set_content_rights",
+  "apple_set_export_compliance",
+  "apple_upload_screenshot",
+  "apple_upload_screenshots",
 ]);
 
 const RELEASE_TOOLS = new Set([
@@ -61,6 +65,11 @@ const RELEASE_TOOLS = new Set([
   "google_upload_apk",
   "apple_get_version_review_info",
   "apple_list_version_review_info",
+  "apple_get_submission_readiness",
+  "apple_get_content_rights",
+  "apple_get_export_compliance",
+  "apple_list_screenshot_sets",
+  "apple_list_screenshots",
 ]);
 
 function inferCategories(name: string): ToolCategory[] {

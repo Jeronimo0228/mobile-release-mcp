@@ -15,6 +15,21 @@ import * as devices from "../providers/apple/devices.js";
 import * as bundleIds from "../providers/apple/bundleIds.js";
 import * as customerReviews from "../providers/apple/customerReviews.js";
 import * as appInfo from "../providers/apple/appInfo.js";
+import * as compliance from "../providers/apple/compliance.js";
+import * as screenshots from "../providers/apple/screenshots.js";
+import { toolSuccess } from "../utils/tool-registry.js";
+import { assertReadableAssetPath } from "../utils/asset-paths.js";
+
+const screenshotDisplayTypeSchema = z.enum([
+  "APP_IPHONE_65",
+  "APP_IPHONE_61",
+  "APP_IPHONE_58",
+  "APP_IPHONE_55",
+  "APP_IPHONE_47",
+  "APP_IPAD_PRO_129",
+  "APP_IPAD_PRO_3GEN_129",
+  "APP_IPAD_105",
+]);
 
 export function registerAppleTools(tool: ToolRegistrar, client: AppleClient) {
   tool.tool(
@@ -1001,5 +1016,181 @@ export function registerAppleTools(tool: ToolRegistrar, client: AppleClient) {
       }));
       return { content: [{ type: "text" as const, text: JSON.stringify(summary, null, 2) }] };
     },
+  );
+
+  tool.tool(
+    "apple_list_screenshot_sets",
+    "List App Store screenshot sets for a version localization",
+    {
+      versionId: z.string().describe("App Store version ID"),
+      locale: z.string().describe("BCP-47 locale, e.g. es-CO"),
+    },
+    async ({ versionId, locale }) => {
+      const localization = await screenshots.findVersionLocalization(
+        client,
+        versionId,
+        locale,
+      );
+      const result = await screenshots.listScreenshotSets(
+        client,
+        localization.id,
+      );
+      return toolSuccess({ localizationId: localization.id, locale, ...result });
+    },
+  );
+
+  tool.tool(
+    "apple_list_screenshots",
+    "List uploaded screenshots in a screenshot set",
+    {
+      screenshotSetId: z.string().describe("App screenshot set ID"),
+    },
+    async ({ screenshotSetId }) => {
+      const result = await screenshots.listScreenshotsInSet(
+        client,
+        screenshotSetId,
+      );
+      return toolSuccess(result);
+    },
+  );
+
+  tool.tool(
+    "apple_upload_screenshot",
+    "Upload one App Store screenshot (reservation + binary upload + commit). Requires confirm: true.",
+    {
+      versionId: z.string().describe("App Store version ID"),
+      locale: z.string().describe("BCP-47 locale"),
+      screenshotDisplayType: screenshotDisplayTypeSchema.describe(
+        "Device display type, e.g. APP_IPHONE_65",
+      ),
+      filePath: z.string().describe("Absolute path to PNG or JPEG screenshot"),
+    },
+    async ({ versionId, locale, screenshotDisplayType, filePath }) => {
+      const safePath = assertReadableAssetPath(filePath);
+      const result = await screenshots.uploadScreenshot(client, {
+        versionId,
+        locale,
+        screenshotDisplayType,
+        filePath: safePath,
+      });
+      return toolSuccess(result);
+    },
+    { categories: ["metadata", "release"], destructive: true },
+  );
+
+  tool.tool(
+    "apple_upload_screenshots",
+    "Upload multiple App Store screenshots sequentially. Requires confirm: true.",
+    {
+      versionId: z.string().describe("App Store version ID"),
+      locale: z.string().describe("BCP-47 locale"),
+      screenshotDisplayType: screenshotDisplayTypeSchema,
+      filePaths: z
+        .array(z.string())
+        .min(1)
+        .describe("Absolute paths to screenshot files"),
+    },
+    async ({ versionId, locale, screenshotDisplayType, filePaths }) => {
+      const safePaths = filePaths.map((p: string) => assertReadableAssetPath(p));
+      const result = await screenshots.uploadScreenshots(client, {
+        versionId,
+        locale,
+        screenshotDisplayType,
+        filePaths: safePaths,
+      });
+      return toolSuccess(result);
+    },
+    { categories: ["metadata", "release"], destructive: true },
+  );
+
+  tool.tool(
+    "apple_get_content_rights",
+    "Get app content rights declaration required before App Store submission",
+    {
+      appId: z.string().describe("App Store Connect app ID"),
+    },
+    async ({ appId }) => {
+      const result = await compliance.getContentRights(client, appId);
+      return toolSuccess(result);
+    },
+    { categories: ["read", "release"] },
+  );
+
+  tool.tool(
+    "apple_set_content_rights",
+    "Set app content rights declaration. Requires confirm: true.",
+    {
+      appId: z.string().describe("App Store Connect app ID"),
+      contentRightsDeclaration: z
+        .enum([
+          "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+          "USES_THIRD_PARTY_CONTENT",
+        ])
+        .describe("Third-party content declaration"),
+    },
+    async ({ appId, contentRightsDeclaration }) => {
+      const result = await compliance.setContentRights(
+        client,
+        appId,
+        contentRightsDeclaration,
+      );
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "apple_get_export_compliance",
+    "Get export compliance / encryption settings for a build",
+    {
+      buildId: z.string().describe("Build ID"),
+    },
+    async ({ buildId }) => {
+      const result = await compliance.getBuildExportCompliance(client, buildId);
+      return toolSuccess(result);
+    },
+    { categories: ["read", "release"] },
+  );
+
+  tool.tool(
+    "apple_set_export_compliance",
+    "Declare export compliance on a build (typically usesNonExemptEncryption: false). Requires confirm: true.",
+    {
+      buildId: z.string().describe("Build ID"),
+      usesNonExemptEncryption: z
+        .boolean()
+        .describe("True if app uses non-exempt encryption"),
+    },
+    async ({ buildId, usesNonExemptEncryption }) => {
+      const result = await compliance.setBuildExportCompliance(client, buildId, {
+        usesNonExemptEncryption,
+        encryptionUpdated: true,
+      });
+      return toolSuccess(result);
+    },
+    { categories: ["release", "destructive"], destructive: true },
+  );
+
+  tool.tool(
+    "apple_get_submission_readiness",
+    "Preflight checklist before App Store submission: content rights, build, export compliance, screenshots",
+    {
+      appId: z.string().describe("App Store Connect app ID"),
+      versionId: z.string().describe("App Store version ID"),
+      locale: z.string().optional().describe("Locale to check screenshots for"),
+      screenshotDisplayType: screenshotDisplayTypeSchema
+        .optional()
+        .describe("Screenshot device type to verify (default APP_IPHONE_65)"),
+    },
+    async ({ appId, versionId, locale, screenshotDisplayType }) => {
+      const result = await compliance.getSubmissionReadiness(client, {
+        appId,
+        versionId,
+        locale,
+        screenshotDisplayType,
+      });
+      return toolSuccess(result);
+    },
+    { categories: ["read", "release"] },
   );
 }

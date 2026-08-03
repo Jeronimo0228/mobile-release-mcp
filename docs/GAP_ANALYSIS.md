@@ -28,7 +28,7 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 |---|---|---|---|
 | Release & tracks | ~70% | ~65% | Strong; missing upload binary on Google |
 | TestFlight / testers | ~60% | ~50% | Groups + tracks; missing external link config |
-| Metadata & listings | ~50% | ~55% | Google images yes; Apple screenshots no |
+| Metadata & listings | ~50% | ~55% | Apple screenshots + compliance (v0.4) |
 | Reviews | ~40% | ~60% | List/reply; missing rejection resolution detail |
 | IAP / subscriptions | ~35% | ~30% | CRUD basics; missing modern pricing/subs v2 depth |
 | Signing / devices | ~50% | N/A | Apple certs/profiles/devices |
@@ -45,9 +45,11 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 | 1 | P0 | Google | Upload AAB/APK to edit | `google_upload_bundle` typed | v0.3.1 |
 | 2 | P0 | Apple | App Review submission + rejection detail | `apple_get_version_review_info` | v0.3.1 |
 | 3 | P0 | Both | Generic API for long tail | `apple_api_call`, `google_api_call` | v0.3.1 |
-| 4 | P0 | Apple | Screenshot / preview upload | Typed + binary helper | Planned 0.4 |
+| # | P | Platform | Gap | Strategy | Status |
+|---|---|---|---|---|---|
+| 4 | P0 | Apple | Screenshot / preview upload | Typed + binary helper | **v0.4.0** |
 | 5 | P0 | Google | Commit edit after upload workflow | Extend `promote_release` / workflow | Planned 0.4 |
-| 6 | P1 | Apple | Export compliance + content rights on version | Typed patch fields | Planned 0.4 |
+| 6 | P1 | Apple | Export compliance + content rights on version | Typed patch fields | **v0.4.0** |
 | 7 | P1 | Google | Play Developer Reporting (crashes, ANR) | Plugin or separate scope | Planned 0.5 |
 | 8 | P1 | Google | Subscriptions catalog (`monetization.subscriptions`) | Typed CRUD | Planned 0.5 |
 | 9 | P1 | Apple | Subscription pricing / localizations | Typed | Planned 0.5 |
@@ -89,7 +91,7 @@ Goal: **~95% of real-world release value** without 300+ MCP tools.
 |---|---|---|---|
 | v0.3.0 | 107 | 0 | ~60% release value |
 | v0.3.1 | 111 | 2 | ~65% + long tail |
-| v0.4.0 | ~125 | 2 | ~80% release value |
+| v0.4.0 | ~120 | 2 | ~80% release value |
 | v1.0.0 | ~150 | 2 + plugins | ~95% release value |
 
 ---
