@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-08-04
+
+### Changed
+
+- **Rename:** npm package `mobile-release-mcp` → **`storepilot-mcp`**; GitHub repo → [`Jeronimo0228/StorePilot`](https://github.com/Jeronimo0228/StorePilot)
+- MCP server id: `storepilot-mcp`; CLI bin unchanged: `storepilot`
+- **`mobile-release-mcp` bin kept** as compatibility alias (deprecated — use `storepilot-mcp`)
+
+### Migration
+
+```bash
+# MCP config (Cursor / Claude)
+npx -y storepilot-mcp@1.1.0
+
+# Was: mobile-release-mcp@1.0.2 — still works via alias bin until v2.0
+```
+
 ## [1.0.2] - 2026-08-04
 
 ### Added
@@ -148,10 +165,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `get_release_status` uses temporary Google edits that are auto-deleted
 - Shared tools return `{ success, data }` response shape
 
-[0.4.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.4.0
-[0.3.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.3.1
-[0.3.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.3.0
-[0.2.3]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.3
-[0.2.2]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.2
-[0.2.1]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.1
-[0.2.0]: https://github.com/Jeronimo0228/mobile-release-mcp/releases/tag/v0.2.0
+[0.4.0]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.4.0
+[0.3.1]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.3.1
+[0.3.0]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.3.0
+[0.2.3]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.2.3
+[0.2.2]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.2.2
+[0.2.1]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.2.1
+[0.2.0]: https://github.com/Jeronimo0228/StorePilot/releases/tag/v0.2.0

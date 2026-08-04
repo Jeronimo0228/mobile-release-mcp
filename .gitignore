@@ -2,4 +2,6 @@ node_modules/
 dist/
 .env
 .data/
+docs/assets/.demo-build/
+docs/assets/storepilot-terminal-4k.mp4
 *.tgz

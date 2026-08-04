@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for trying StorePilot! This template is for **trial runs** using `scripts/try-storepilot.sh` (no store writes).
-        Setup: [CREDENTIALS.md](https://github.com/Jeronimo0228/mobile-release-mcp/blob/master/docs/CREDENTIALS.md)
+        Setup: [CREDENTIALS.md](https://github.com/Jeronimo0228/StorePilot/blob/master/docs/CREDENTIALS.md)
 
   - type: dropdown
     id: environment
@@ -24,8 +24,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: mobile-release-mcp version
-      placeholder: "1.0.2"
+      label: storepilot-mcp version
+      placeholder: "1.1.0"
     validations:
       required: true
 

@@ -19,7 +19,7 @@ done
 export LOG_LEVEL="${LOG_LEVEL:-error}"
 
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║  StorePilot demo — mobile-release-mcp                       ║"
+echo "║  StorePilot demo — storepilot-mcp                           ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -52,7 +52,7 @@ echo ""
 
 echo "▶ 3/4  MCP tools/list (release toolset sample)"
 printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"demo","version":"1"}}}\n{"jsonrpc":"2.0","method":"notifications/initialized"}\n{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}\n' \
-  | timeout 10 mobile-release-mcp 2>/dev/null \
+  | timeout 10 storepilot-mcp 2>/dev/null \
   | tail -1 \
   | node -e "
 const chunks = [];
@@ -73,7 +73,7 @@ echo ""
 echo "▶ 4/4  execute_release_intent (dryRun — no confirm needed)"
 ARGS='{"intent":"configure_rollout","percentage":10,"dryRun":true}'
 printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"demo","version":"1"}}}\n{"jsonrpc":"2.0","method":"notifications/initialized"}\n{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"execute_release_intent","arguments":'"$ARGS"'}}\n' \
-  | timeout 25 mobile-release-mcp 2>/dev/null \
+  | timeout 25 storepilot-mcp 2>/dev/null \
   | tail -1 \
   | node -e "
 const chunks = [];

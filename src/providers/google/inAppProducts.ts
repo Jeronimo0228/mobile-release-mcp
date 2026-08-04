@@ -18,7 +18,7 @@ export async function listInAppProducts(
     const message = err instanceof Error ? err.message : String(err);
     if (message.includes("migrate") || message.includes("inappproducts")) {
       throw new ToolError(
-        "Google Play in-app products API has moved to monetization.onetimeproducts. Update mobile-release-mcp if this persists.",
+        "Google Play in-app products API has moved to monetization.onetimeproducts. Update storepilot-mcp if this persists.",
         "GOOGLE_API_ERROR",
         false,
         "Use google_list_in_app_products with a current package version, or manage products in Play Console.",

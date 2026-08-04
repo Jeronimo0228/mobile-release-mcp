@@ -1,12 +1,12 @@
 # Contributing
 
-Thanks for contributing to mobile-release-mcp!
+Thanks for contributing to StorePilot!
 
 ## Development setup
 
 ```bash
-git clone https://github.com/Jeronimo0228/mobile-release-mcp.git
-cd mobile-release-mcp
+git clone https://github.com/Jeronimo0228/StorePilot.git
+cd StorePilot
 npm install
 cp .env.example .env
 npm run dev

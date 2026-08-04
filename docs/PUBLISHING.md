@@ -10,12 +10,12 @@ This project uses **npm trusted publishing** via GitHub Actions. No npm tokens i
 # 1. Bump version in package.json and CHANGELOG.md
 # 2. Commit and push
 git add package.json CHANGELOG.md src/server.ts
-git commit -m "Release v0.2.1"
+git commit -m "Release v1.1.0"
 git push origin master
 
 # 3. Tag and push (triggers release.yml)
-git tag v0.2.1
-git push origin v0.2.1
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
 The `release.yml` workflow:
@@ -28,13 +28,21 @@ Verify on npm: package page should show **Provenance** badge.
 
 ### npm trusted publisher setup (one-time)
 
-npm → `mobile-release-mcp` → Settings → **Trusted Publisher**:
+npm → **`storepilot-mcp`** → Settings → **Trusted Publisher**:
 
 | Field | Value |
 |---|---|
-| Repository | `Jeronimo0228/mobile-release-mcp` |
+| Repository | `Jeronimo0228/StorePilot` |
 | Workflow | `release.yml` |
 | Environment | (empty or `npm`) |
+
+> **Migration from `mobile-release-mcp`:** After publishing `storepilot-mcp@1.1.0`, deprecate the old package:
+>
+> ```bash
+> npm deprecate mobile-release-mcp "Renamed to storepilot-mcp — use npx storepilot-mcp@latest"
+> ```
+>
+> Update the trusted publisher on the **new** package (`storepilot-mcp`). The old package publisher can remain for deprecation only.
 
 ---
 
@@ -63,7 +71,9 @@ Rotate any token used for manual publish afterward.
 ## Consumer install
 
 ```bash
-npx -y mobile-release-mcp@0.2.1
+npx -y storepilot-mcp@1.1.0
 ```
 
-Verify provenance on https://www.npmjs.com/package/mobile-release-mcp
+Verify provenance on https://www.npmjs.com/package/storepilot-mcp
+
+Legacy alias (deprecated): `mobile-release-mcp` bin still ships until v2.0 for existing MCP configs.

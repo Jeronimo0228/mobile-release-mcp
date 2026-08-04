@@ -1,13 +1,13 @@
 # Security guide
 
-Hardening practices for deploying and maintaining `mobile-release-mcp`.
+Hardening practices for deploying and maintaining `storepilot-mcp`.
 
 For vulnerability reporting, supported versions, and supply-chain policy, see [SECURITY.md](../SECURITY.md) in the repo root.
 
 ### Installing safely
 
 ```bash
-npx --yes mobile-release-mcp@latest
+npx --yes storepilot-mcp@latest
 ```
 
 Optional hardening for consumers:

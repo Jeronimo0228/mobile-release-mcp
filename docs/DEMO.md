@@ -5,7 +5,7 @@ Reproducible demo for LinkedIn GIF, README, or conference clip. **Read-only + dr
 ## Prerequisites
 
 - Node.js ≥ 20
-- `npm install -g mobile-release-mcp@latest` (or `npx`)
+- `npm install -g storepilot-mcp@latest` (or `npx`)
 - App Store Connect API key (`.p8`)
 - Optional: Google Play service account for Android snapshot
 - `storepilot.yaml` in your app repo — copy from [`storepilot.example.yaml`](../storepilot.example.yaml)
@@ -24,6 +24,7 @@ export LOG_LEVEL=error
 
 ```bash
 bash scripts/demo-storepilot.sh
+# or: npm run demo
 ```
 
 Expected output (shape):
@@ -42,6 +43,41 @@ Expected output (shape):
   "plan": "Configure 10% staged rollout on production",
   "steps": 2
 }
+```
+
+## Pre-recorded demo (4K + store console mockups)
+
+Full demo (~70s): **terminal snapshot** → **App Store Connect** (before/after) → **Google Play Console** (before/after).
+
+Mockups are stylized recreations of ASC / Play Console release UI (not official screenshots).
+
+| File | Resolution | Use |
+|---|---|---|
+| [`storepilot-demo-4k.mp4`](../docs/assets/storepilot-demo-4k.mp4) | **3840×2160** | LinkedIn, YouTube, keynote |
+| [`storepilot-demo-4k.gif`](../docs/assets/storepilot-demo-4k.gif) | 1280px proxy | Preview |
+| [`storepilot-demo.mp4`](../docs/assets/storepilot-demo.mp4) | 1280px | Lightweight embed |
+
+### Build 4K demo (one command)
+
+Requires [vhs](https://github.com/charmbracelet/vhs), [ttyd](https://github.com/tsl0922/ttyd), Chromium, ffmpeg, and store credentials:
+
+```bash
+export STOREPILOT_CONFIG_PATH=./storepilot.yaml
+export APPLE_KEY_ID=... APPLE_ISSUER_ID=... APPLE_PRIVATE_KEY_PATH=...
+export GOOGLE_SERVICE_ACCOUNT_KEY_PATH=...
+export LOG_LEVEL=error MCP_TOOLSET=release
+
+npm run record:demo:4k
+```
+
+Edits:
+- Terminal: `docs/storepilot-demo-4k.tape`
+- Store UI mockups: `docs/assets/mockups/*.html` (Chromium screenshots at 3840×2160)
+
+### Legacy terminal-only GIF
+
+```bash
+npm run record:demo   # 720p terminal only
 ```
 
 ## Record a GIF (60 seconds)
@@ -82,25 +118,25 @@ Paste in chat after MCP is connected:
 Share with a colleague:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Jeronimo0228/mobile-release-mcp/master/scripts/try-storepilot.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Jeronimo0228/StorePilot/master/scripts/try-storepilot.sh | bash
 ```
 
 Or clone and run:
 
 ```bash
-git clone https://github.com/Jeronimo0228/mobile-release-mcp.git
-cd mobile-release-mcp
+git clone https://github.com/Jeronimo0228/StorePilot.git
+cd StorePilot
 # set env vars, then:
 bash scripts/try-storepilot.sh
 ```
 
-Feedback: [Try StorePilot issue template](https://github.com/Jeronimo0228/mobile-release-mcp/issues/new?template=try-storepilot.yml)
+Feedback: [Try StorePilot issue template](https://github.com/Jeronimo0228/StorePilot/issues/new?template=try-storepilot.yml)
 
 ## Troubleshooting
 
 | Issue | Fix |
 |---|---|
 | JSON parse error in CLI | `export LOG_LEVEL=error` (logs go to stderr) |
-| `confirm` required on dry-run | Upgrade to ≥ 1.0.2 |
+| `confirm` required on dry-run | Upgrade to ≥ 1.1.0 |
 | No `storepilot.yaml` | Set `STOREPILOT_CONFIG_PATH` |
 | Android snapshot empty | Add `GOOGLE_SERVICE_ACCOUNT_KEY_PATH` |

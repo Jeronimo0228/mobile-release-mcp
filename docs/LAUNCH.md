@@ -7,7 +7,7 @@ Draft copy for the **definitive** StorePilot post. Adjust tone to your voice bef
 - [ ] README golden path live on GitHub
 - [ ] Record GIF via [DEMO.md](./DEMO.md) (`scripts/demo-storepilot.sh`)
 - [ ] 1 colleague runs `scripts/try-storepilot.sh` and files feedback
-- [ ] npm `@latest` ≥ 1.0.2
+- [ ] npm `@latest` ≥ 1.1.0 (`storepilot-mcp`)
 
 ## Hook options (pick one)
 
@@ -23,7 +23,7 @@ Draft copy for the **definitive** StorePilot post. Adjust tone to your voice bef
 
 Durante meses usé scripts sueltos y la consola de Apple/Google. Con Cursor/Claude el problema no es “¿hay API?” — es **¿puede mi agente saber si estamos listos para publicar sin romper producción?**
 
-Por eso construí **StorePilot** (`mobile-release-mcp` en npm):
+Por eso construí **StorePilot** (`storepilot-mcp` en npm):
 
 ✅ **Un snapshot** — producción vs candidato en iOS y Android  
 ✅ **Blockers explicados** — “falta build”, “track internal”, etc.  
@@ -35,12 +35,12 @@ No reemplaza Fastlane/EAS (build). Orquesta **store ops** con guardrails.
 
 **Probar (5 min, sin escribir en tiendas):**
 ```bash
-npx -y mobile-release-mcp@latest
+npx -y storepilot-mcp@latest
 # + storepilot.yaml — ver README
 ```
 
-📦 npm: https://www.npmjs.com/package/mobile-release-mcp  
-📖 GitHub: https://github.com/Jeronimo0228/mobile-release-mcp  
+📦 npm: https://www.npmjs.com/package/storepilot-mcp  
+📖 GitHub: https://github.com/Jeronimo0228/StorePilot  
 🎬 Demo: `scripts/demo-storepilot.sh`
 
 Early v1 — busco feedback de equipos mobile + MCP.  
@@ -58,7 +58,7 @@ Early v1 — busco feedback de equipos mobile + MCP.
 
 AI agents are great at code. They're risky at **production store ops** unless they know what's blocking release.
 
-**StorePilot** (`mobile-release-mcp` on npm) gives agents:
+**StorePilot** (`storepilot-mcp` on npm) gives agents:
 
 ✅ Cross-platform **release snapshot**  
 ✅ **Explained blockers** + next actions  
@@ -68,8 +68,8 @@ AI agents are great at code. They're risky at **production store ops** unless th
 
 Complements Fastlane/EAS (build) — focuses on **store orchestration with guardrails**.
 
-Try it: https://github.com/Jeronimo0228/mobile-release-mcp  
-npm: `npx -y mobile-release-mcp`
+Try it: https://github.com/Jeronimo0228/StorePilot  
+npm: `npx -y storepilot-mcp`
 
 Early v1 — feedback welcome from mobile + MCP folks.
 
@@ -92,9 +92,9 @@ Early v1 — feedback welcome from mobile + MCP folks.
 
 | Asset | Spec |
 |---|---|
-| GIF | 30–60s, terminal demo, ≤ 5 MB |
-| Link | GitHub README (golden path visible) |
-| CTA | “Try `try-storepilot.sh` — 5 min, read-only” |
+| **4K MP4** | `docs/assets/storepilot-demo-4k.mp4` — 3840×2160, ~60s, LinkedIn native |
+| **4K GIF** | `docs/assets/storepilot-demo-4k.gif` — preview embed |
+| Rebuild | `npm run record:demo:4k` (credentials required) |
 
 ## After posting
 

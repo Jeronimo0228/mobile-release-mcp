@@ -5,7 +5,7 @@
  *   cd /path/to/your-app   # must contain storepilot.yaml
  *   APPLE_KEY_ID=... APPLE_ISSUER_ID=... APPLE_PRIVATE_KEY_PATH=... \
  *   GOOGLE_SERVICE_ACCOUNT_KEY_PATH=... \
- *   node --import tsx /path/to/mobile-release-mcp/scripts/live-snapshot.ts
+ *   node --import tsx /path/to/StorePilot/scripts/live-snapshot.ts
  */
 
 import { loadConfig, validateConfig } from "../src/utils/config.js";

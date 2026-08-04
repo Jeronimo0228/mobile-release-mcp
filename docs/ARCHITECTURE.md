@@ -4,7 +4,7 @@
 
 ```
 ┌─────────────────┐     stdio or HTTP      ┌──────────────────────┐
-│  MCP Client     │ ◄────────────────────► │  mobile-release-mcp  │
+│  MCP Client     │ ◄────────────────────► │  storepilot-mcp      │
 │  (Cursor, etc.) │                        │                      │
 └─────────────────┘                        │  ┌────────────────┐  │
                                            │  │ Tool registrar │  │

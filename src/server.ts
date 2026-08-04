@@ -14,7 +14,7 @@ declare const __APP_VERSION__: string;
 
 export function createMcpServer(config: Config): McpServer {
   const server = new McpServer({
-    name: "mobile-release-mcp",
+    name: "storepilot-mcp",
     version: __APP_VERSION__,
   });
 

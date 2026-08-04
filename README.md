@@ -8,15 +8,19 @@
 
 <br />
 
-[![npm version](https://img.shields.io/npm/v/mobile-release-mcp.svg?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/mobile-release-mcp)
-[![CI](https://img.shields.io/github/actions/workflow/status/Jeronimo0228/mobile-release-mcp/ci.yml?branch=master&style=flat-square&logo=github&label=CI)](https://github.com/Jeronimo0228/mobile-release-mcp/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/storepilot-mcp.svg?style=flat-square&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/storepilot-mcp)
+[![CI](https://img.shields.io/github/actions/workflow/status/Jeronimo0228/StorePilot/ci.yml?branch=master&style=flat-square&logo=github&label=CI)](https://github.com/Jeronimo0228/StorePilot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-compatible-6366F1?style=flat-square)](https://modelcontextprotocol.io)
 
 <br />
 
-**npm:** [`mobile-release-mcp`](https://www.npmjs.com/package/mobile-release-mcp) · **CLI:** `storepilot`
+**npm:** [`storepilot-mcp`](https://www.npmjs.com/package/storepilot-mcp) · **CLI:** `storepilot`
+
+<img src="docs/assets/storepilot-demo-4k.gif" alt="StorePilot 4K demo — CLI, App Store Connect, Google Play Console" width="100%" />
+
+<p align="center"><sub>4K master: <code>docs/assets/storepilot-demo-4k.mp4</code> · Rebuild: <code>npm run record:demo:4k</code></sub></p>
 
 [Golden path](#golden-path-storepilot) · [Quick start](#quick-start) · [Demo](docs/DEMO.md) · [Tools](docs/TOOLS.md) · [Compare](docs/COMPARISON.md) · [Launch post](docs/LAUNCH.md)
 
@@ -46,7 +50,7 @@ Three steps from zero to “agent knows if you can ship”:
 ### 1. Add `storepilot.yaml` to your app repo
 
 ```bash
-cp path/to/mobile-release-mcp/storepilot.example.yaml ./storepilot.yaml
+cp path/to/StorePilot/storepilot.example.yaml ./storepilot.yaml
 # Edit stores.ios.appId and stores.android.package
 ```
 
@@ -69,7 +73,7 @@ release:
   "mcpServers": {
     "storepilot": {
       "command": "npx",
-      "args": ["-y", "mobile-release-mcp@1.0.2"],
+      "args": ["-y", "storepilot-mcp@1.1.0"],
       "env": {
         "APPLE_KEY_ID": "YOUR_KEY_ID",
         "APPLE_ISSUER_ID": "YOUR_ISSUER_ID",
@@ -110,7 +114,7 @@ Full walkthrough: **[docs/DEMO.md](docs/DEMO.md)**
 ## Quick start
 
 ```bash
-npx -y mobile-release-mcp@1.0.2
+npx -y storepilot-mcp@1.1.0
 ```
 
 Credentials: [docs/CREDENTIALS.md](docs/CREDENTIALS.md) — EAS webhooks do **not** replace App Store / Play API keys.
@@ -167,15 +171,15 @@ EAS/GitHub → POST /webhook/* → verify → persist
 ## Development
 
 ```bash
-git clone https://github.com/Jeronimo0228/mobile-release-mcp.git
-cd mobile-release-mcp
+git clone https://github.com/Jeronimo0228/StorePilot.git
+cd StorePilot
 npm install
 npm test
 npm run build
 npm run storepilot -- snapshot   # from source
 ```
 
-Try it without cloning: **`npx mobile-release-mcp@1.0.2`** + [scripts/try-storepilot.sh](scripts/try-storepilot.sh)
+Try it without cloning: **`npx storepilot-mcp@1.1.0`** + [scripts/try-storepilot.sh](scripts/try-storepilot.sh)
 
 ## Project structure
 
@@ -192,7 +196,7 @@ docs/               DEMO, TOOLS, COMPARISON, LAUNCH (LinkedIn draft)
 
 ## Feedback
 
-Early v1 — we want real-world reports: [Try StorePilot feedback](https://github.com/Jeronimo0228/mobile-release-mcp/issues/new?template=try-storepilot.yml)
+Early v1 — we want real-world reports: [Try StorePilot feedback](https://github.com/Jeronimo0228/StorePilot/issues/new?template=try-storepilot.yml)
 
 ## License
 
