@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-08-04
+
+### Added
+
+- **Launch kit:** README golden path (StorePilot branding), [docs/DEMO.md](docs/DEMO.md), [docs/LAUNCH.md](docs/LAUNCH.md)
+- **`scripts/demo-storepilot.sh`** — recordable terminal demo for LinkedIn GIF
+- **`scripts/try-storepilot.sh`** — 5-minute external trial (read-only + dry-run)
+- GitHub issue template: **Try StorePilot feedback**
+
+### Fixed
+
+- Destructive workflow tools no longer require `confirm: true` when `dryRun` is true or omitted (default)
+
+### Changed
+
+- `storepilot.example.yaml` uses placeholder IDs (not real app data)
+- [docs/TOOLS.md](docs/TOOLS.md) updated for v1.0 orchestrator + Google tools
+
 ## [1.0.1] - 2026-08-03
 
 ### Fixed

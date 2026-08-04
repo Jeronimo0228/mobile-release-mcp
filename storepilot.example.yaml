@@ -1,22 +1,22 @@
 # StorePilot project profile — copy to storepilot.yaml in your app repo root.
-# Docs: docs/TOOLS.md (Orchestrator tools)
+# Golden path: docs/DEMO.md
 
-project: plazario
-name: HRIP / Plazario
+project: my-app
+name: My App
 
 stores:
   ios:
-    appId: "6793579931"
-    bundleId: com.hrip.app
+    appId: "1234567890"
+    bundleId: com.example.myapp
   android:
-    package: com.hrip.app
+    package: com.example.myapp
 
 build:
   provider: eas
-  # projectId: your-eas-project-id
+  projectId: your-eas-project-uuid
 
 release:
-  defaultRollout: 0.1
+  defaultRollout: 0.1   # 10% staged rollout (fraction 0–1 or percent 1–100)
   tracks:
     internal: internal
     closed: alpha
@@ -24,5 +24,5 @@ release:
     production: production
 
 locales:
-  - es-CO
   - en-US
+  - es-CO

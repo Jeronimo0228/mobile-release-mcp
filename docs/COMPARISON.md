@@ -1,6 +1,6 @@
 # StorePilot vs published MCP servers
 
-Comparison of **mobile-release-mcp** (StorePilot) **v1.0.0** against the main published alternatives for AI-driven mobile release automation.
+Comparison of **StorePilot** (`mobile-release-mcp`) **v1.0.2** against published alternatives.
 
 | Factor | **StorePilot** (this) | [app-publish-mcp](https://github.com/mikusnuz/app-publish-mcp) | [google-play-developer-mcp](https://github.com/devinwang/google-play-developer-mcp) | [silviosotelo/mobile-release-mcp](https://github.com/silviosotelo/mobile-release-mcp) | [google-play-mcp](https://github.com/Jang-myoung-gyoon/google-play-mcp) |
 |---|---|---|---|---|---|
@@ -54,9 +54,8 @@ Build (EAS / Fastlane / silviosotelo MCP)  →  StorePilot MCP  →  App Store +
 ## Install
 
 ```bash
-npx -y mobile-release-mcp@1.0.0
-# or CLI:
-npx -y mobile-release-mcp storepilot status
+npx -y mobile-release-mcp@1.0.2
+storepilot snapshot   # CLI
 ```
 
 See [TOOLS.md](./TOOLS.md) and [GAP_ANALYSIS.md](./GAP_ANALYSIS.md) for coverage details.

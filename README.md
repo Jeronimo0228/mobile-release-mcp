@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="docs/assets/banner.jpg" alt="mobile-release-mcp — Ship iOS & Android from your AI agent" width="100%" />
+# StorePilot
 
-<br />
+**Release orchestration MCP for App Store Connect + Google Play**
 
-101 MCP tools · App Store Connect · Google Play · EAS & GitHub webhooks
+*Ask your agent “can I ship?” — get blockers, a plan, and safe dry-runs before touching production.*
 
 <br />
 
@@ -16,43 +16,66 @@
 
 <br />
 
-[`npx -y mobile-release-mcp`](https://www.npmjs.com/package/mobile-release-mcp) · [Quick start](#quick-start) · [Tools](docs/TOOLS.md) · [Credentials](docs/CREDENTIALS.md) · [Changelog](CHANGELOG.md)
+**npm:** [`mobile-release-mcp`](https://www.npmjs.com/package/mobile-release-mcp) · **CLI:** `storepilot`
+
+[Golden path](#golden-path-storepilot) · [Quick start](#quick-start) · [Demo](docs/DEMO.md) · [Tools](docs/TOOLS.md) · [Compare](docs/COMPARISON.md) · [Launch post](docs/LAUNCH.md)
 
 </div>
 
 ---
 
-## Install
+> **Not the same as** [silviosotelo/mobile-release-mcp](https://github.com/silviosotelo/mobile-release-mcp) (Fastlane/build focus).  
+> **StorePilot** = store operations + release orchestration for AI agents.
+
+## Why StorePilot
+
+| Other MCP servers | StorePilot |
+|---|---|
+| 90+ low-level tools, agent picks one-by-one | **Snapshot → blockers → intent → execute** |
+| No project memory | `storepilot.yaml` + `.storepilot/memory.json` |
+| Writes hit production immediately | **`dryRun: true` by default** on workflows |
+| Apple *or* Google depth | **Both**, plus escape hatch for long tail |
+| No CI hooks | **EAS + GitHub webhooks** built in |
+
+~**131 typed tools** · **91 in `release` toolset** · App Store Connect · Google Play · provenance on npm
+
+## Golden path (StorePilot)
+
+Three steps from zero to “agent knows if you can ship”:
+
+### 1. Add `storepilot.yaml` to your app repo
 
 ```bash
-# Run directly (recommended for MCP clients)
-npx -y mobile-release-mcp
-
-# Or install globally
-npm install -g mobile-release-mcp
-mobile-release-mcp
+cp path/to/mobile-release-mcp/storepilot.example.yaml ./storepilot.yaml
+# Edit stores.ios.appId and stores.android.package
 ```
 
-No deployment required for local use with Cursor or Claude Desktop.
+```yaml
+project: my-app
+stores:
+  ios:
+    appId: "1234567890"
+    bundleId: com.example.app
+  android:
+    package: com.example.app
+release:
+  defaultRollout: 0.1
+```
 
-## Quick start
-
-### 1. Get credentials
-
-You need **App Store Connect** and/or **Google Play** API credentials. EAS webhooks do not replace these — see [docs/CREDENTIALS.md](docs/CREDENTIALS.md).
-
-### 2. Connect to Cursor or Claude Desktop
+### 2. Point MCP at your project
 
 ```json
 {
   "mcpServers": {
-    "mobile-release": {
+    "storepilot": {
       "command": "npx",
-      "args": ["-y", "mobile-release-mcp"],
+      "args": ["-y", "mobile-release-mcp@1.0.2"],
       "env": {
-        "APPLE_KEY_ID": "ABC1234DEF",
-        "APPLE_ISSUER_ID": "00000000-0000-0000-0000-000000000000",
+        "APPLE_KEY_ID": "YOUR_KEY_ID",
+        "APPLE_ISSUER_ID": "YOUR_ISSUER_ID",
         "APPLE_PRIVATE_KEY_PATH": "/path/to/AuthKey.p8",
+        "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "/path/to/play-service-account.json",
+        "STOREPILOT_CONFIG_PATH": "/path/to/your-app/storepilot.yaml",
         "MCP_TOOLSET": "release"
       }
     }
@@ -62,210 +85,114 @@ You need **App Store Connect** and/or **Google Play** API credentials. EAS webho
 
 ### 3. Ask your agent
 
-> "List my App Store apps and the latest build for each one."
+```
+"Load my project and explain what's blocking release."
+→ load_project / get_release_snapshot / explain_release_blockers
 
-### Alternative: run from source
+"Plan a 10% production rollout (don't execute yet)."
+→ execute_release_intent { intent: "rollout_production", percentage: 10, dryRun: true }
+
+"When ready: promote Android internal → production at 10%."
+→ execute_release_intent { intent: "promote_to_production", dryRun: false, confirm: true }
+```
+
+**CLI (no IDE):**
+
+```bash
+export STOREPILOT_CONFIG_PATH=./storepilot.yaml
+# + Apple/Google env vars — see docs/CREDENTIALS.md
+storepilot snapshot    # blockers + next actions
+storepilot projects    # multi-app registry
+```
+
+Full walkthrough: **[docs/DEMO.md](docs/DEMO.md)**
+
+## Quick start
+
+```bash
+npx -y mobile-release-mcp@1.0.2
+```
+
+Credentials: [docs/CREDENTIALS.md](docs/CREDENTIALS.md) — EAS webhooks do **not** replace App Store / Play API keys.
+
+## Features
+
+### Orchestrator (v1.0+)
+
+- `get_release_snapshot` — production vs candidate, cross-platform blockers
+- `explain_release_blockers` — human-readable “what to do next”
+- `execute_release_intent` — rollout, promote, submit (dry-run default)
+- `list_projects` — multi-app registry via `STOREPILOT_PROJECTS_DIR`
+- `promote_release`, `configure_rollout`, `create_tester_group`
+
+### Safety & ops
+
+- **`confirm: true`** on destructive writes; workflows skip confirm when `dryRun` is true (default)
+- **Toolsets:** `MCP_TOOLSET=release` | `readonly` | `all`
+- **Escape hatch:** `apple_api_call`, `google_api_call` for long-tail API
+- **Webhooks:** EAS Build/Submit + GitHub Actions → `list_pending_webhooks`
+- **Transports:** stdio (Cursor/Claude) or HTTP `/mcp`
+- **Tests:** `npm test` (42+), `npm run smoke` (live, needs credentials)
+
+### Store coverage
+
+- **Apple:** builds, TestFlight, metadata, screenshots, export compliance, submission preflight
+- **Google:** tracks, uploads, subscriptions, internal app sharing, deobfuscation maps
+
+See [docs/TOOLS.md](docs/TOOLS.md) · [docs/COMPARISON.md](docs/COMPARISON.md)
+
+## Configuration
+
+| Variable | Description |
+|---|---|
+| `STOREPILOT_CONFIG_PATH` | Path to `storepilot.yaml` |
+| `STOREPILOT_PROJECTS_DIR` | Directory of app repos for `list_projects` |
+| `MCP_TOOLSET` | `release` (recommended), `readonly`, `all` |
+| `APPLE_*` / `GOOGLE_*` | Store API credentials — [CREDENTIALS.md](docs/CREDENTIALS.md) |
+| `EAS_PROJECT_MAPPINGS` | Map EAS project → store IDs for webhooks |
+| `LOG_LEVEL` | Set `error` for clean CLI JSON output |
+
+Full env reference: [.env.example](.env.example)
+
+## Webhook flow
+
+```
+EAS/GitHub → POST /webhook/* → verify → persist
+  → list_pending_webhooks
+  → get_release_snapshot
+  → execute_release_intent (dryRun → confirm)
+  → mark_webhook_processed
+```
+
+## Development
 
 ```bash
 git clone https://github.com/Jeronimo0228/mobile-release-mcp.git
 cd mobile-release-mcp
 npm install
-cp .env.example .env
-# Edit .env with your credentials
+npm test
 npm run build
-npm start
+npm run storepilot -- snapshot   # from source
 ```
 
-For local development from source, point MCP clients to `node /path/to/dist/index.js` instead of `npx`.
-
-## Why use this
-
-| Benefit | What you get |
-|---|---|
-| **Agent-native releases** | Agents call typed tools instead of fragile shell scripts around `fastlane` or manual store UI clicks |
-| **Cross-platform** | One MCP server for App Store Connect and Google Play |
-| **Webhook-driven CI** | EAS/GitHub events trigger agent workflows via `list_pending_webhooks` |
-| **Production-ready defaults** | Retries on rate limits, pagination, persistent webhooks, startup validation |
-| **Safe by default** | Destructive tools require `confirm: true`; toolsets limit agent surface area |
-
-## Features
-
-- **101 MCP tools** — iOS, Android, and shared release operations
-- **Webhook listener** — EAS (Build + Submit) and GitHub Actions (`workflow_run`)
-- **Signature verification** — HMAC-SHA1 (EAS), HMAC-SHA256 (GitHub); secrets required in production
-- **Persistent webhooks** — events saved to disk (`WEBHOOK_STORAGE_PATH`), survive restarts
-- **Unified release flow** — `trigger_full_release` for both platforms
-- **Stdio + HTTP transports** — local MCP clients or remote `/mcp` deployment
-- **Configurable toolsets** — `all`, `release`, or `readonly` via `MCP_TOOLSET`
-- **Structured errors** — consistent JSON errors with retry hints for agents
-
-## Documentation
-
-| Doc | Contents |
-|---|---|
-| [docs/CREDENTIALS.md](docs/CREDENTIALS.md) | Store credentials vs webhook secrets, EAS project mapping |
-| [docs/TOOLSETS.md](docs/TOOLSETS.md) | Limiting tools for agents (`MCP_TOOLSET`) |
-| [docs/TOOLS.md](docs/TOOLS.md) | Full tool catalog with categories |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Transports, reliability, project layout |
-| [docs/SECURITY.md](docs/SECURITY.md) | Supply chain, HTTP auth, deployment hardening |
-| [SECURITY.md](SECURITY.md) | Vulnerability reporting |
-
-## Configuration
-
-Copy `.env.example` to `.env` when running from source, or set env vars in your MCP client config.
-
-Minimum for iOS:
-
-```env
-APPLE_KEY_ID=ABC1234DEF
-APPLE_ISSUER_ID=00000000-0000-0000-0000-000000000000
-APPLE_PRIVATE_KEY_PATH=/path/to/AuthKey.p8
-MCP_TOOLSET=release
-```
-
-### All environment variables
-
-| Variable | Default | Description |
-|---|---|---|
-| `APPLE_KEY_ID` | — | App Store Connect API key ID |
-| `APPLE_ISSUER_ID` | — | App Store Connect issuer ID |
-| `APPLE_PRIVATE_KEY_PATH` | — | Path to `.p8` key file |
-| `APPLE_PRIVATE_KEY_BASE64` | — | Alternative: base64-encoded key |
-| `GOOGLE_SERVICE_ACCOUNT_KEY_PATH` | — | Path to service account JSON |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | — | Alternative: inline JSON |
-| `MCP_TRANSPORT` | `stdio` | `stdio` or `http` |
-| `MCP_HTTP_API_KEY` | — | **Required** in HTTP mode (≥32 chars). Bearer token for `/mcp` |
-| `MCP_ALLOWED_ORIGINS` | — | Comma-separated CORS origins (empty = disabled) |
-| `MCP_PORT` | `3000` | HTTP server port (when `http`) |
-| `MCP_TOOLSET` | `all` | `all`, `release`, or `readonly` |
-| `WEBHOOK_PORT` | `3000` | Webhook port in stdio mode |
-| `WEBHOOK_STORAGE_PATH` | `.data/webhooks.json` | Persistent webhook storage |
-| `WEBHOOK_REQUIRE_SECRETS` | `true` | Reject webhooks without secrets |
-| `EAS_WEBHOOK_SECRET` | — | EAS HMAC secret |
-| `GITHUB_WEBHOOK_SECRET` | — | GitHub HMAC secret |
-| `EAS_PROJECT_MAPPINGS` | — | JSON map EAS project → store IDs |
-| `LOG_LEVEL` | `info` | `debug`, `info`, `warn`, `error` |
-
-## Requirements
-
-- Node.js >= 20
-- [App Store Connect API key](https://developer.apple.com/documentation/appstoreconnectapi/creating_api_keys_for_app_store_connect_api) (for iOS tools)
-- [Google Play service account](https://developers.google.com/android-publisher/getting_started#using_a_service_account) (for Android tools)
-
-> **Important:** EAS webhooks notify you about builds — they do **not** provide store API credentials. See [docs/CREDENTIALS.md](docs/CREDENTIALS.md).
-
-## HTTP deployment (remote MCP)
-
-```env
-MCP_TRANSPORT=http
-MCP_PORT=3000
-EAS_WEBHOOK_SECRET=your-secret
-GITHUB_WEBHOOK_SECRET=your-secret
-```
-
-Endpoints on a single server:
-
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/mcp` | GET, POST, DELETE | MCP Streamable HTTP transport |
-| `/webhook/eas` | POST | EAS build/submit webhooks |
-| `/webhook/github` | POST | GitHub Actions webhooks |
-| `/health` | GET | Health check |
-
-Connect MCP clients to `http://your-host:3000/mcp`.
-
-Deploy with `npx mobile-release-mcp` as the start command and env vars from your host's secret manager (Railway, Fly.io, etc.).
-
-## Webhook setup
-
-### EAS
-
-```bash
-eas webhook:create --event BUILD --url https://your-server.com/webhook/eas --secret your-eas-secret
-eas webhook:create --event SUBMIT --url https://your-server.com/webhook/eas --secret your-eas-secret
-```
-
-### GitHub Actions
-
-Settings → Webhooks → Payload URL: `https://your-server.com/webhook/github`, events: **Workflow runs**.
-
-### EAS project mapping
-
-Map Expo project names to store identifiers:
-
-```env
-EAS_PROJECT_MAPPINGS=[{"projectName":"my-app","iosAppId":"1234567890","androidPackageName":"com.example.app"}]
-```
-
-### Webhook flow
-
-```
-EAS/GitHub → POST /webhook/* → verify signature → persist to disk
-  → Agent: list_pending_webhooks (includes mappedTargets)
-  → Agent: trigger_full_release (confirm: true)
-  → Agent: mark_webhook_processed
-```
-
-## Examples
-
-### Release on both platforms
-
-```json
-{
-  "platforms": ["ios", "android"],
-  "confirm": true,
-  "ios": {
-    "appId": "1234567890",
-    "buildId": "abc-build-id",
-    "versionString": "2.1.0",
-    "releaseNotes": [{ "locale": "en-US", "whatsNew": "Bug fixes" }]
-  },
-  "android": {
-    "packageName": "com.example.app",
-    "versionCodes": ["42"],
-    "track": "production",
-    "status": "completed"
-  }
-}
-```
-
-### React to EAS build webhook
-
-```
-1. list_pending_webhooks → check mappedTargets.appleAppId
-2. apple_list_builds → verify build is VALID
-3. trigger_full_release with confirm: true
-4. mark_webhook_processed
-```
-
-See [docs/TOOLS.md](docs/TOOLS.md) for the complete tool reference.
-
-## Development
-
-```bash
-npm run dev        # Run with tsx
-npm run typecheck  # TypeScript check
-npm run build      # Production build
-npm test           # Run tests
-```
-
-Publishing instructions: [docs/PUBLISHING.md](docs/PUBLISHING.md)
+Try it without cloning: **`npx mobile-release-mcp@1.0.2`** + [scripts/try-storepilot.sh](scripts/try-storepilot.sh)
 
 ## Project structure
 
 ```
 src/
-├── index.ts              Entry point
-├── server.ts             MCP server factory
-├── http/app.ts           HTTP transport (MCP + webhooks)
-├── providers/apple/      App Store Connect API
-├── providers/google/     Google Play Developer API
-├── tools/                MCP tool registrations
-├── webhook/              Webhook routes, storage, parsers
-└── utils/                Config, retry, errors, tool registry
-docs/                     Detailed documentation
-tests/                    Unit tests
+├── core/           Release snapshot, workflows, release-intent
+├── tools/          MCP registrations (orchestrator, apple, google, escape)
+├── providers/      App Store Connect + Google Play clients
+├── plugins/        Plugin hook contract (v1.0)
+├── cli.ts          storepilot CLI
+└── webhook/        EAS + GitHub
+docs/               DEMO, TOOLS, COMPARISON, LAUNCH (LinkedIn draft)
 ```
+
+## Feedback
+
+Early v1 — we want real-world reports: [Try StorePilot feedback](https://github.com/Jeronimo0228/mobile-release-mcp/issues/new?template=try-storepilot.yml)
 
 ## License
 

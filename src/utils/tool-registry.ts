@@ -176,20 +176,24 @@ export function createToolRegistrar(
         return;
       }
 
+      const hasDryRun = "dryRun" in schema;
       const finalSchema = destructive
         ? {
             ...schema,
             confirm: z
               .literal(true)
+              .optional()
               .describe(
-                "Must be true to confirm this action. Destructive or irreversible store operations require explicit confirmation.",
+                hasDryRun
+                  ? "Required when dryRun is false. Omit when dryRun is true (default)."
+                  : "Must be true to confirm this destructive or irreversible store operation.",
               ),
           }
         : schema;
 
       server.tool(name, description, finalSchema, async (args) => {
         try {
-          const dryRun = args.dryRun === true;
+          const dryRun = hasDryRun && args.dryRun !== false;
           if (destructive && args.confirm !== true && !dryRun) {
             throw new ToolError(
               `Tool "${name}" requires confirm: true when dryRun is false`,

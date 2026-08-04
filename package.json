@@ -1,7 +1,7 @@
 {
   "name": "mobile-release-mcp",
-  "version": "1.0.1",
-  "description": "MCP server for managing mobile app releases on App Store Connect and Google Play Console",
+  "version": "1.0.2",
+  "description": "StorePilot — MCP release orchestration for App Store Connect and Google Play (snapshot, blockers, dry-run intents)",
   "license": "MIT",
   "author": "Jerónimo Restrepo <jrestrepoa@eafit.edu.co>",
   "type": "module",
@@ -20,6 +20,9 @@
     "docs/TOOLSETS.md",
     "docs/COMPARISON.md",
     "docs/GAP_ANALYSIS.md",
+    "docs/DEMO.md",
+    "docs/LAUNCH.md",
+    "storepilot.example.yaml",
     ".env.example"
   ],
   "overrides": {
@@ -38,6 +41,8 @@
     "smoke": "node --import tsx scripts/smoke-tools.ts",
     "snapshot": "node --import tsx scripts/live-snapshot.ts",
     "storepilot": "node --import tsx src/cli.ts",
+    "demo": "bash scripts/demo-storepilot.sh",
+    "try": "bash scripts/try-storepilot.sh",
     "prepublishOnly": "npm run typecheck && npm run test && npm run build",
     "prepack": "npm run build"
   },
@@ -54,7 +59,9 @@
     "expo",
     "eas",
     "cursor",
-    "claude"
+    "claude",
+    "storepilot",
+    "ai-agents"
   ],
   "repository": {
     "type": "git",

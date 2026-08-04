@@ -1,10 +1,11 @@
 # Tools reference
 
-101 MCP tools across iOS (67), Android (34), shared (4), plus **6 orchestrator** and **6 escape/upload** tools.
+**~131 MCP tools** — iOS (~75), Android (~45), shared (4), **8 orchestrator**, **6 escape/upload**, plus compliance & screenshots.
 
-> **Tip:** Copy `storepilot.example.yaml` to `storepilot.yaml` in your app repo so orchestrator tools resolve app IDs automatically.
+> Copy [`storepilot.example.yaml`](../storepilot.example.yaml) → `storepilot.yaml` in your app repo.  
+> Golden path: [DEMO.md](./DEMO.md) · Compare: [COMPARISON.md](./COMPARISON.md)
 
-> **Tip:** Use `MCP_TOOLSET=release` or `readonly` to reduce the tool surface. See [TOOLSETS.md](./TOOLSETS.md).
+> Use `MCP_TOOLSET=release` (91 tools) or `readonly`. See [TOOLSETS.md](./TOOLSETS.md).
 
 ## Response format
 
@@ -21,30 +22,35 @@ Failures return structured errors with `code`, `retryable`, and `suggestion`.
 
 ## Confirmation required
 
-These tools require `"confirm": true`:
+Destructive tools require `"confirm": true` when **`dryRun` is false** (or when the tool has no dry-run mode).
+
+Workflow tools (`promote_release`, `configure_rollout`, `execute_release_intent`, `create_tester_group`) default to **`dryRun: true`** — preview without `confirm`.
+
+Other destructive tools (no dry-run):
 
 - `trigger_full_release`
-- `promote_release`, `configure_rollout` (when `dryRun: false`)
 - `apple_submit_for_review`, `apple_submit_for_beta_review`
 - `apple_delete_*`, `apple_remove_*`, `apple_revoke_*`, `apple_disable_capability`
-- `google_delete_*`, `google_halt_release`
+- `google_delete_*`, `google_halt_release`, upload tools without dry-run
 
 ---
 
-## Orchestrator / StorePilot (6)
+## Orchestrator / StorePilot (8)
 
-High-level release workflows. **`dryRun` defaults to `true`** — preview first, then set `dryRun: false` and `confirm: true` to execute writes.
+High-level release workflows. **`dryRun` defaults to `true`**.
 
 | Tool | Category | Description |
 |---|---|---|
 | `load_project` | read | Load `storepilot.yaml` + `.storepilot/memory.json` |
+| `list_projects` | read | Multi-app registry (`STOREPILOT_PROJECTS_DIR`, `~/.config/storepilot/projects`) |
 | `get_release_snapshot` | read | Production vs candidate, blockers, next actions |
 | `explain_release_blockers` | read | Human-readable release guidance |
+| `execute_release_intent` | release | Unified intent: `rollout_production`, `promote_to_production`, `submit_for_review`, `configure_rollout` |
 | `create_tester_group` | release | TestFlight group + Play track testers |
 | `promote_release` | release | Android track promotion or iOS submit for review |
 | `configure_rollout` | release | Staged rollout % (Android) or phased release (iOS) |
 
-## Escape hatch & uploads (6)
+## Escape hatch & uploads (6+)
 
 | Tool | Category | Description |
 |---|---|---|
@@ -53,7 +59,23 @@ High-level release workflows. **`dryRun` defaults to `true`** — preview first,
 | `apple_api_call` | admin | Raw ASC API (`GET` free; writes need `confirm: true`) |
 | `google_upload_bundle` | release | Upload AAB (auto commit optional) |
 | `google_upload_apk` | release | Upload APK to an edit |
+| `google_upload_and_release` | release | Upload AAB + assign track + commit (one workflow) |
+| `google_upload_deobfuscation_file` | release | ProGuard/R8 mapping upload |
+| `google_list_subscriptions` | read | Play subscriptions catalog (v2 API) |
+| `google_get_subscription` | read | Single subscription by product ID |
+| `google_upload_internal_sharing_apk` | release | Internal App Sharing APK |
+| `google_upload_internal_sharing_bundle` | release | Internal App Sharing AAB |
 | `google_api_call` | admin | Raw Play API via dot notation (`get`/`list` free) |
+
+## Apple — TestFlight & compliance (v1.0 highlights)
+
+| Tool | Category | Description |
+|---|---|---|
+| `apple_set_beta_group_public_link` | release | Enable/disable TestFlight public link |
+| `apple_get_submission_readiness` | read | Preflight checklist before submit |
+| `apple_upload_screenshot` / `apple_upload_screenshots` | release | Screenshot binary upload flow |
+| `apple_get/set_content_rights` | read/release | Content rights declaration |
+| `apple_get/set_export_compliance` | read/release | Export compliance on version |
 
 ---
 

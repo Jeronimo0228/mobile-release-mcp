@@ -1,0 +1,66 @@
+name: Try StorePilot feedback
+description: Report from running the StorePilot trial kit (read-only / dry-run)
+title: "[Try StorePilot] "
+labels: ["try-storepilot", "feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying StorePilot! This template is for **trial runs** using `scripts/try-storepilot.sh` (no store writes).
+        Setup: [CREDENTIALS.md](https://github.com/Jeronimo0228/mobile-release-mcp/blob/master/docs/CREDENTIALS.md)
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Cursor MCP
+        - Claude Desktop
+        - CLI only (storepilot)
+        - Other MCP client
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: mobile-release-mcp version
+      placeholder: "1.0.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Stores tested
+      options:
+        - iOS only
+        - Android only
+        - Both iOS + Android
+    validations:
+      required: true
+
+  - type: textarea
+    id: snapshot
+    attributes:
+      label: Snapshot / blockers output (paste JSON or summary)
+      placeholder: "blockers: [...], nextActions: [...]"
+
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked well?
+    validations:
+      required: true
+
+  - type: textarea
+    id: friction
+    attributes:
+      label: What was confusing or broken?
+    validations:
+      required: true
+
+  - type: textarea
+    id: missing
+    attributes:
+      label: What's missing for your workflow?
