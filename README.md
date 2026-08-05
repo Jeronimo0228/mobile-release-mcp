@@ -18,10 +18,6 @@
 
 **npm:** [`storepilot-mcp`](https://www.npmjs.com/package/storepilot-mcp) · **CLI:** `storepilot`
 
-<img src="docs/assets/storepilot-demo-4k.gif" alt="StorePilot 4K demo — CLI, App Store Connect, Google Play Console" width="100%" />
-
-<p align="center"><sub>4K master: <code>docs/assets/storepilot-demo-4k.mp4</code> · Rebuild: <code>npm run record:demo:4k</code></sub></p>
-
 [Golden path](#golden-path-storepilot) · [Quick start](#quick-start) · [Demo](docs/DEMO.md) · [Tools](docs/TOOLS.md) · [Compare](docs/COMPARISON.md) · [Launch post](docs/LAUNCH.md)
 
 </div>

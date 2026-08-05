@@ -5,7 +5,7 @@ Draft copy for the **definitive** StorePilot post. Adjust tone to your voice bef
 ## Before you post
 
 - [ ] README golden path live on GitHub
-- [ ] Record GIF via [DEMO.md](./DEMO.md) (`scripts/demo-storepilot.sh`)
+- [ ] Run live demo via [DEMO.md](./DEMO.md) (`npm run demo` or `scripts/demo-storepilot.sh`)
 - [ ] 1 colleague runs `scripts/try-storepilot.sh` and files feedback
 - [ ] npm `@latest` ≥ 1.1.0 (`storepilot-mcp`)
 
@@ -88,13 +88,14 @@ Early v1 — feedback welcome from mobile + MCP folks.
 
 > **StorePilot is the only unified App Store + Play MCP with release snapshot, blocker analysis, and dry-run intents — not just 100 disconnected API wrappers.**
 
-## Media checklist
+## Media checklist (optional)
 
 | Asset | Spec |
 |---|---|
-| **4K MP4** | `docs/assets/storepilot-demo-4k.mp4` — 3840×2160, ~60s, LinkedIn native |
-| **4K GIF** | `docs/assets/storepilot-demo-4k.gif` — preview embed |
-| Rebuild | `npm run record:demo:4k` (credentials required) |
+| Terminal recording | Run `npm run demo` and screen-record 30–60s (OBS, asciinema, etc.) |
+| Screenshots | JSON output from snapshot + dry-run intent |
+
+No pre-built video is shipped in the repo — record when you're ready to post.
 
 ## After posting
 

@@ -4,6 +4,30 @@
 
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+run_storepilot() {
+  if command -v storepilot >/dev/null 2>&1; then
+    storepilot "$@"
+  elif [[ -f "$ROOT/dist/cli.js" ]]; then
+    node "$ROOT/dist/cli.js" "$@"
+  else
+    echo "Run npm run build first (or install storepilot-mcp globally)" >&2
+    exit 1
+  fi
+}
+
+if command -v storepilot-mcp >/dev/null 2>&1; then
+  MCP_CMD=(storepilot-mcp)
+elif command -v mobile-release-mcp >/dev/null 2>&1; then
+  MCP_CMD=(mobile-release-mcp)
+elif [[ -f "$ROOT/dist/index.js" ]]; then
+  MCP_CMD=(node "$ROOT/dist/index.js")
+else
+  echo "Run npm run build first (or install storepilot-mcp globally)" >&2
+  exit 1
+fi
+
 echo "StorePilot trial kit"
 echo "===================="
 echo ""
@@ -45,18 +69,18 @@ echo "Running read-only checks..."
 echo ""
 
 echo "1. Project registry"
-storepilot projects 2>/dev/null
+run_storepilot projects 2>/dev/null
 echo ""
 
 echo "2. Release snapshot"
-storepilot snapshot 2>/dev/null | head -c 4000
+run_storepilot snapshot 2>/dev/null | head -c 4000
 echo ""
 echo ""
 
 echo "3. Dry-run rollout intent (no store changes)"
 ARGS='{"intent":"configure_rollout","percentage":10,"dryRun":true}'
 out=$(printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"trial","version":"1"}}}\n{"jsonrpc":"2.0","method":"notifications/initialized"}\n{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"execute_release_intent","arguments":'"$ARGS"'}}\n' \
-  | timeout 30 storepilot-mcp 2>/dev/null | tail -1)
+  | timeout 30 "${MCP_CMD[@]}" 2>/dev/null | tail -1)
 
 echo "$out" | node -e "
 const chunks = [];

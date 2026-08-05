@@ -1,6 +1,6 @@
 # StorePilot demo
 
-Reproducible demo for LinkedIn GIF, README, or conference clip. **Read-only + dry-run** — no store writes.
+Reproducible **read-only + dry-run** walkthrough — no store writes.
 
 ## Prerequisites
 
@@ -44,63 +44,6 @@ Expected output (shape):
   "steps": 2
 }
 ```
-
-## Pre-recorded demo (4K + store console mockups)
-
-Full demo (~70s): **terminal snapshot** → **App Store Connect** (before/after) → **Google Play Console** (before/after).
-
-Mockups are stylized recreations of ASC / Play Console release UI (not official screenshots).
-
-| File | Resolution | Use |
-|---|---|---|
-| [`storepilot-demo-4k.mp4`](../docs/assets/storepilot-demo-4k.mp4) | **3840×2160** | LinkedIn, YouTube, keynote |
-| [`storepilot-demo-4k.gif`](../docs/assets/storepilot-demo-4k.gif) | 1280px proxy | Preview |
-| [`storepilot-demo.mp4`](../docs/assets/storepilot-demo.mp4) | 1280px | Lightweight embed |
-
-### Build 4K demo (one command)
-
-Requires [vhs](https://github.com/charmbracelet/vhs), [ttyd](https://github.com/tsl0922/ttyd), Chromium, ffmpeg, and store credentials:
-
-```bash
-export STOREPILOT_CONFIG_PATH=./storepilot.yaml
-export APPLE_KEY_ID=... APPLE_ISSUER_ID=... APPLE_PRIVATE_KEY_PATH=...
-export GOOGLE_SERVICE_ACCOUNT_KEY_PATH=...
-export LOG_LEVEL=error MCP_TOOLSET=release
-
-npm run record:demo:4k
-```
-
-Edits:
-- Terminal: `docs/storepilot-demo-4k.tape`
-- Store UI mockups: `docs/assets/mockups/*.html` (Chromium screenshots at 3840×2160)
-
-### Legacy terminal-only GIF
-
-```bash
-npm run record:demo   # 720p terminal only
-```
-
-## Record a GIF (60 seconds)
-
-### Option A — Terminal recorder (recommended)
-
-```bash
-# asciinema (install: dnf install asciinema / brew install asciinema)
-asciinema rec storepilot-demo.cast
-bash scripts/demo-storepilot.sh
-# Ctrl+D to stop, then:
-agg storepilot-demo.cast storepilot-demo.gif
-```
-
-### Option B — OBS / SimpleScreenRecorder
-
-1. Terminal full-screen, dark theme, font 16–18pt
-2. Run `bash scripts/demo-storepilot.sh`
-3. Crop to terminal, export 30–60s MP4 → convert to GIF (≤ 5 MB for LinkedIn)
-
-### Option C — Static screenshot carousel
-
-If no GIF: use three screenshots from demo steps 2–4 (snapshot JSON, tool list, dry-run plan).
 
 ## Agent demo (Cursor / Claude)
 
