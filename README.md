@@ -18,6 +18,10 @@
 
 **npm:** [`storepilot-mcp`](https://www.npmjs.com/package/storepilot-mcp) · **CLI:** `storepilot`
 
+<img src="docs/assets/storepilot-console-4k-preview.gif" alt="StorePilot console demo — snapshot, blockers, dry-run intents" width="100%" />
+
+<p align="center"><sub>4K: <code>docs/assets/storepilot-console-4k.mp4</code> · Rebuild: <code>npm run record:console:4k</code></sub></p>
+
 [Golden path](#golden-path-storepilot) · [Quick start](#quick-start) · [Demo](docs/DEMO.md) · [Tools](docs/TOOLS.md) · [Compare](docs/COMPARISON.md) · [Launch post](docs/LAUNCH.md)
 
 </div>
@@ -69,7 +73,7 @@ release:
   "mcpServers": {
     "storepilot": {
       "command": "npx",
-      "args": ["-y", "storepilot-mcp@1.1.0"],
+      "args": ["-y", "storepilot-mcp@latest"],
       "env": {
         "APPLE_KEY_ID": "YOUR_KEY_ID",
         "APPLE_ISSUER_ID": "YOUR_ISSUER_ID",
@@ -110,7 +114,7 @@ Full walkthrough: **[docs/DEMO.md](docs/DEMO.md)**
 ## Quick start
 
 ```bash
-npx -y storepilot-mcp@1.1.0
+npx -y storepilot-mcp@latest
 ```
 
 Credentials: [docs/CREDENTIALS.md](docs/CREDENTIALS.md) — EAS webhooks do **not** replace App Store / Play API keys.
@@ -175,7 +179,7 @@ npm run build
 npm run storepilot -- snapshot   # from source
 ```
 
-Try it without cloning: **`npx storepilot-mcp@1.1.0`** + [scripts/try-storepilot.sh](scripts/try-storepilot.sh)
+Try it without cloning: **`npx storepilot-mcp@latest`** + [scripts/try-storepilot.sh](scripts/try-storepilot.sh)
 
 ## Project structure
 

@@ -119,4 +119,4 @@ process.stdin.on('end', () => {
 "
 
 echo ""
-echo "✓ Demo complete. Record this script for a LinkedIn GIF (see docs/DEMO.md)."
+echo "✓ Demo complete. See docs/DEMO.md to record a video."

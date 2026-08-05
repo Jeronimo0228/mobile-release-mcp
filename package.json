@@ -1,6 +1,6 @@
 {
   "name": "storepilot-mcp",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "StorePilot — MCP release orchestration for App Store Connect and Google Play (snapshot, blockers, dry-run intents)",
   "license": "MIT",
   "author": "Jerónimo Restrepo <jrestrepoa@eafit.edu.co>",
@@ -44,6 +44,7 @@
     "storepilot": "node --import tsx src/cli.ts",
     "demo": "npm run build && bash scripts/demo-storepilot.sh",
     "try": "npm run build && bash scripts/try-storepilot.sh",
+    "record:console:4k": "bash scripts/build-console-demo-4k.sh",
     "prepublishOnly": "npm run typecheck && npm run test && npm run build",
     "prepack": "npm run build"
   },

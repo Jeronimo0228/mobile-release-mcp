@@ -1,6 +1,6 @@
 # StorePilot vs published MCP servers
 
-Comparison of **StorePilot** (`storepilot-mcp`) **v1.1.0** against published alternatives.
+Comparison of **StorePilot** (`storepilot-mcp`) **v1.1.2** against published alternatives.
 
 | Factor | **StorePilot** (this) | [app-publish-mcp](https://github.com/mikusnuz/app-publish-mcp) | [google-play-developer-mcp](https://github.com/devinwang/google-play-developer-mcp) | [silviosotelo/mobile-release-mcp](https://github.com/silviosotelo/mobile-release-mcp) | [google-play-mcp](https://github.com/Jang-myoung-gyoon/google-play-mcp) |
 |---|---|---|---|---|---|
@@ -54,7 +54,7 @@ Build (EAS / Fastlane / silviosotelo MCP)  →  StorePilot MCP  →  App Store +
 ## Install
 
 ```bash
-npx -y storepilot-mcp@1.1.0
+npx -y storepilot-mcp@latest
 storepilot snapshot   # CLI
 ```
 

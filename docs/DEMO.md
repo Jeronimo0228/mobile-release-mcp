@@ -27,6 +27,31 @@ bash scripts/demo-storepilot.sh
 # or: npm run demo
 ```
 
+## 4K console demo (video)
+
+Terminal walkthrough for LinkedIn / README — install, snapshot, MCP tools, dry-run intents.
+
+| File | Resolution | Use |
+|---|---|---|
+| `docs/assets/storepilot-console-4k.mp4` | **3840×2160** | LinkedIn, YouTube |
+| `docs/assets/storepilot-console-4k-preview.gif` | 1280px | README embed |
+
+Rebuild (requires [asciinema](https://asciinema.org), ffmpeg, store credentials — `agg` is auto-downloaded):
+
+```bash
+export STOREPILOT_CONFIG_PATH=/path/to/storepilot.yaml
+export APPLE_KEY_ID=... APPLE_ISSUER_ID=... APPLE_PRIVATE_KEY_PATH=...
+export GOOGLE_SERVICE_ACCOUNT_KEY_PATH=...   # optional
+
+npm run record:console:4k
+```
+
+Live terminal (no video):
+
+```bash
+bash scripts/demo-console-4k.sh
+```
+
 Expected output (shape):
 
 ```json

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-08-05
+
+### Added
+
+- **4K console demo** — `docs/assets/storepilot-console-4k.mp4` (~2 min, fullscreen terminal walkthrough)
+- **`npm run record:console:4k`** — asciinema + agg pipeline to rebuild demo (credentials required)
+- **`scripts/demo-console-4k.sh`** — cinematic live terminal demo (typing, ● LIVE badges, dry-run MCP)
+
+### Changed
+
+- README embeds `storepilot-console-4k-preview.gif`; docs use `storepilot-mcp@latest`
+- Demo scripts use LF line endings; wrapper renamed to `record-demo-wrapper.sh`
+
 ## [1.1.1] - 2026-08-05
 
 ### Changed

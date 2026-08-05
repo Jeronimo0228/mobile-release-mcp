@@ -7,7 +7,8 @@ Draft copy for the **definitive** StorePilot post. Adjust tone to your voice bef
 - [ ] README golden path live on GitHub
 - [ ] Run live demo via [DEMO.md](./DEMO.md) (`npm run demo` or `scripts/demo-storepilot.sh`)
 - [ ] 1 colleague runs `scripts/try-storepilot.sh` and files feedback
-- [ ] npm `@latest` ≥ 1.1.0 (`storepilot-mcp`)
+- [ ] npm `@latest` (`storepilot-mcp`)
+- [ ] 4K demo in README (`docs/assets/storepilot-console-4k.mp4`)
 
 ## Hook options (pick one)
 
@@ -92,10 +93,9 @@ Early v1 — feedback welcome from mobile + MCP folks.
 
 | Asset | Spec |
 |---|---|
-| Terminal recording | Run `npm run demo` and screen-record 30–60s (OBS, asciinema, etc.) |
-| Screenshots | JSON output from snapshot + dry-run intent |
-
-No pre-built video is shipped in the repo — record when you're ready to post.
+| **4K MP4** | `docs/assets/storepilot-console-4k.mp4` — terminal demo ~2 min |
+| **Preview GIF** | `docs/assets/storepilot-console-4k-preview.gif` — README embed |
+| Rebuild | `npm run record:console:4k` (credentials + asciinema + ffmpeg) |
 
 ## After posting
 
