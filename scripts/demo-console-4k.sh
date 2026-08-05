@@ -1,43 +1,29 @@
 #!/usr/bin/env bash
-# StorePilot 4K console demo — cinematic live terminal walkthrough.
+# StorePilot 4K console demo — Dracula terminal, full command walkthrough.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PACE="${DEMO_PACE:-1.2}"
-W="${DEMO_WIDTH:-118}"
+W="${DEMO_WIDTH:-100}"
 
-run_storepilot() {
-  if command -v storepilot >/dev/null 2>&1; then
-    storepilot "$@"
-  else
-    node "$ROOT/dist/cli.js" "$@"
-  fi
-}
-
-if command -v storepilot-mcp >/dev/null 2>&1; then
-  MCP_CMD=(storepilot-mcp)
-elif [[ -f "$ROOT/dist/index.js" ]]; then
-  MCP_CMD=(node "$ROOT/dist/index.js")
-else
-  echo "Missing storepilot-mcp — run npm run build" >&2
-  exit 1
-fi
+# shellcheck source=demo-bin.sh
+source "$ROOT/scripts/demo-bin.sh"
+setup_storepilot_demo_bins
 
 pause() { sleep "$PACE"; }
 pause_long() { sleep "$PACE"; sleep "$PACE"; }
 
-banner_line() {
-  local plain="$1"
-  local pad=$(( W - 4 - ${#plain} ))
-  (( pad < 1 )) && pad=1
-  printf "\033[1;33m  ║\033[0m  %s%*s\033[1;33m║\033[0m\n" "$plain" "$pad" ""
+rule() {
+  local line
+  line=$(printf '%*s' $((W - 2)) '' | tr ' ' '-')
+  printf '\033[1;35m%s\033[0m\n' "$line"
 }
 
 section() {
   echo ""
-  printf "\033[1;35m  %s\033[0m\n" "$(printf '━%.0s' $(seq 1 $W))"
-  printf "\033[1;35m  %s\033[0m\n" "$1"
-  printf "\033[1;35m  %s\033[0m\n" "$(printf '━%.0s' $(seq 1 $W))"
+  rule
+  printf '\033[1;35m  %s\033[0m\n' "$1"
+  rule
   echo ""
   pause
 }
@@ -98,17 +84,20 @@ process.stdin.on('end', () => {
 export LOG_LEVEL="${LOG_LEVEL:-error}"
 export MCP_TOOLSET="${MCP_TOOLSET:-release}"
 
+banner_line() {
+  local line
+  line=$(printf '%*s' $((W - 2)) '' | tr ' ' "$1")
+  printf '\033[1;33m%s\033[0m\n' "$line"
+}
+
 if [[ -t 1 ]]; then clear || true; fi
 printf '\033]0;StorePilot — live release demo\007'
 
 echo ""
-top=$(printf '═%.0s' $(seq 1 $((W - 4))))
-echo -e "\033[1;33m  ╔${top}╗\033[0m"
-banner_line ""
-banner_line "StorePilot — MCP release orchestration for App Store + Google Play"
-banner_line "Live demo · blockers first · dry-run always · no production writes"
-banner_line ""
-echo -e "\033[1;33m  ╚${top}╝\033[0m"
+banner_line '='
+echo -e "\033[1;33m  StorePilot\033[0m — MCP release orchestration for App Store + Google Play"
+echo -e "\033[2m  Live demo · blockers first · dry-run always · no production writes\033[0m"
+banner_line '='
 echo ""
 echo -e "\033[1;31m  ● REC\033[0m  \033[2m$(date '+%H:%M:%S') — terminal session\033[0m"
 pause
@@ -116,7 +105,7 @@ pause
 
 section "Install"
 typing "npx -y storepilot-mcp@latest"
-echo -e "\033[2m  → MCP server + storepilot CLI (stdio, no global install)\033[0m"
+echo -e "\033[2m  → StorePilot MCP (npm: storepilot-mcp — replaces mobile-release-mcp)\033[0m"
 pause
 
 section "Project profile"
@@ -233,5 +222,5 @@ pause
 
 if [[ -n "${DEMO_RECORDING:-}" ]]; then
   echo -e "\033[2m  storepilot-mcp\033[0m"
-  sleep 20
+  sleep 12
 fi

@@ -4,3 +4,4 @@ dist/
 .data/
 .demo-build/
 *.tgz
+*.log

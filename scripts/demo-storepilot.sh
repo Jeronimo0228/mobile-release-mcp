@@ -6,31 +6,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-run_storepilot() {
-  if command -v storepilot >/dev/null 2>&1; then
-    storepilot "$@"
-  elif [[ -f "$ROOT/dist/cli.js" ]]; then
-    node "$ROOT/dist/cli.js" "$@"
-  else
-    echo "Run npm run build first (or install storepilot-mcp globally)" >&2
-    exit 1
-  fi
-}
-
-run_mcp() {
-  "${MCP_CMD[@]}" "$@"
-}
-
-if command -v storepilot-mcp >/dev/null 2>&1; then
-  MCP_CMD=(storepilot-mcp)
-elif command -v mobile-release-mcp >/dev/null 2>&1; then
-  MCP_CMD=(mobile-release-mcp)
-elif [[ -f "$ROOT/dist/index.js" ]]; then
-  MCP_CMD=(node "$ROOT/dist/index.js")
-else
-  echo "Run npm run build first (or install storepilot-mcp globally)" >&2
-  exit 1
-fi
+# shellcheck source=demo-bin.sh
+source "$ROOT/scripts/demo-bin.sh"
+setup_storepilot_demo_bins
 
 if [[ -z "${STOREPILOT_CONFIG_PATH:-}" ]]; then
   echo "Set STOREPILOT_CONFIG_PATH to your storepilot.yaml" >&2
